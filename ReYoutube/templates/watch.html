@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title> ReYoutube - {{video_id}}</title>
+    <meta name="video_id" content="{{video_id}}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="video-container d-flex justify-content-center py-3"  style="height: 90vh;">
+    <iframe width="1280" height="720" loading="lazy"
+            src="https://www.youtube.com/embed/{{video_id}}"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+
+    </iframe>
+  </div>
+
+    <hr>
+
+  <div class="rounded container-sm">
+     <div id="comment_input" class="mt-5">
+         <form class="input-group mb-3" action="/api/comments/add" method="POST">
+            <input type="text" class="form-control" name="message" placeholder="Comment message" aria-label="Comment message" aria-describedby="button-addon2">
+             <input name="redirect" style="display: none;" value=True>
+             <button class="btn btn-outline-primary" type="submit" id="button-addon2">Send</button>
+         </form>
+     </div>
+
+    <div>
+        {{num_comments}} Comments
+    </div>
+    <div id="comments" class="py-3">
+
+        <!-- div to contain the content -->
+          <div id="scroller" class="mb-3">
+
+            <!-- template schema, hidden from the dom -->
+            <template id="post_template">
+
+             <div class="card animate__animated animate__zoomIn animate__faster">
+                 <div class="row">
+                     <!-- TODO: implement profile picture which does not look retarded
+                      <div class="col">
+                          <img id="comment-picture", src="" alt="..." class="rounded-circle" width="32" height="32">
+                      </div>
+                      -->
+                     <div class="col">
+                          <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted" id="comment-title">
+
+                            </h6>
+                                <p class="card-text" id="comment-content">
+
+                                </p>
+                          </div>
+                       <div>
+                 </div>
+            </div>
+
+            </template>
+
+          </div>
+
+          <!-- element to trigger the IntersectionObserver -->
+          <div class="d-flex justify-content-center mb-3" id="sentinel">
+            <div class="spinner-border" role="status"></div>
+          </div>
+
+
+    </div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='lazyLoader.js') }}"></script>
+{% endblock %}
