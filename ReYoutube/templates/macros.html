@@ -1,0 +1,131 @@
+
+{%- macro render_comments(comments, indent, auto_collapse, comments_page) %}
+
+    {%- for comment in comments %}
+            <div
+                    id = "comment-{{comment.id}}"
+                    style=" {% if indent < config.MAX_COMMENT_INDENTATION_LEVEL%} margin-left: {{indent * 5}}% !important; {% endif %}"
+            >
+
+                <div class="card animate__animated animate__zoomIn animate__faster">
+                     <!-- TODO: implement profile picture which does not look retarded
+                      <div class="col">
+                          <img id="comment-picture", src="" alt="..." class="rounded-circle" width="32" height="32">
+                      </div>
+                      -->
+                      <div class="card-body">
+                            <div class="d-flex flex-row justify-content-between">
+                                <h6 class="card-subtitle mb-2 text-muted" id="comment-title">
+                                    {{comment.user.username}} - {{comment.created_at|yt_strftime}} {{"(Edited)" if comment.is_edited else ""}}
+                                </h6>
+
+                                <div class="comment-options d-flex flex-row">
+                                    {% if comment.user == current_user %}
+
+                                        <form style="display: none;" id="comment-{{comment.id}}-save-option"
+                                              action="{{url_for('watch', page=comments_page)}}" method="POST" class="px-1">
+                                            <input type="hidden" name="action" value="edit">
+                                            <input type="hidden" name="comment_id" value="{{comment.id}}">
+                                            <input id="comment-{{comment.id}}-save-value" type="hidden" name="message" value="">
+                                            <input type="hidden" name="video_id" value="{{video_id}}">
+
+                                            <button id="comment-{{comment.id}}-save-submit" style="display: none;" type="submit"></button>
+                                            <button class="btn p-0 underline_animation" type="button"
+                                                    onclick="save_comment({{comment.id}})"
+                                                    style="margin-bottom: .5rem; margin-top: -0.4rem;">
+                                                Save
+                                            </button>
+                                        </form>
+
+                                        <div class="pe-1" style="display: block;">
+                                            <button class="btn p-0 underline_animation" type="button"
+                                                    id="comment-{{comment.id}}-edit-option"
+                                                    onclick="edit_comment({{comment.id}})"
+                                                    style="margin-bottom: .5rem; margin-top: -0.4rem;">
+                                                Edit
+                                            </button>
+                                        </div>
+
+                                        <form action="{{url_for('watch', page=comments_page)}}" method="POST">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="comment_id" value="{{comment.id}}">
+                                            <input type="hidden" name="video_id" value="{{video_id}}">
+
+                                            <button class="btn p-0 fs-6 underline_animation" type="submit"
+                                                style="margin-bottom: .5rem; margin-top: -0.4rem; color: red;">
+                                                Delete
+                                            </button>
+                                            <!-- TODO: modal -->
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="container">
+                              <div class="row">
+                                <div class="col p-0">
+                                  <div class="read_more">
+                                        <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
+                                            <a href="#comment-{{comment.parent.id}}">{% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}</a>
+    
+                                            {{comment.comment}}
+                                        </p>
+                                      {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
+                                        <a class="collapsed btn btn-link p-0 mt-1 mb-2 read_more_link" data-bs-toggle="collapse"
+                                              data-bs-target="#comment-content-{{comment.id}}"
+                                           href="#comment-content-{{comment.id}}"
+                                              aria-expanded="false" aria-controls=".reply-input">
+                                        </a>
+                                      {% endif %}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div id="comment-{{comment.id}}-edit" class="comment-edit-area form-floating" style="display: none;">
+                                    <textarea style="height: 100px;" class="form-control" placeholder="Write a new comment content here" id="comment-{{comment.id}}-input-textarea"></textarea>
+                                    <label for="comment-{{comment.id}}-input-textarea">Comment content</label>
+                            </div>
+
+                          <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse"
+                                  data-bs-target="#reply-input-{{comment.id}}"
+                                  aria-expanded="false" aria-controls=".reply-input">
+                             Reply
+                          </button>
+
+
+                      </div>
+
+                     {% if comment.replies|list|length > 0%}
+                          <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse"
+                                  data-bs-target="#comment-replies-{{comment.id}}"
+                                  aria-expanded="false" aria-controls="comment-replies-{{comment.id}}">
+                             Show {{ comment.replies|list|length }} more replies
+                          </button>
+                     {% endif %}
+
+                </div>
+                        <!-- Input for a reply-->
+                        <div id="reply-input-{{comment.id}}" class="collapse">
+                                 <form class="input-group mb-3 py-2"
+                                       action="{{url_for('watch', page=comments_page)}}" method="POST">
+                                    <input type="text" class="form-control" name="message"
+                                           placeholder="Reply to {{ comment.user.username}}"
+                                           aria-label="Comment message" aria-describedby="button-addon2">
+                                     <input type="hidden" name="action" value="reply">
+                                     <input type="hidden" name="comment_id" value="{{comment.id}}">
+                                     <input type="hidden" name="video_id" value="{{video_id}}">
+
+                                     <button class="btn btn-outline-primary" type="submit" id="button-addon2">Reply</button>
+                                 </form>
+                          </div>
+
+                    <div id="comment-replies-{{comment.id}}" class="collapse {% if auto_collapse == None %} {% else %} show {% endif %}">
+                        {%- if comment.replies is defined %}
+                            {{render_comments(comment.replies, indent + 1, auto_collapse, comments_page)}}
+                        {%- endif %}
+                    </div>
+            </div>
+
+    {%- endfor %}
+{%- endmacro %}

@@ -3,7 +3,6 @@ from flask_login import LoginManager, UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 
 from datetime import datetime
-from ReYoutube.utils import youtube_date_format
 
 db = SQLAlchemy()
 
@@ -27,23 +26,45 @@ class User(UserMixin, db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime(), default=datetime.now())
+    created_at = db.Column(db.DateTime(), default=datetime.now)
     comment = db.Column(db.String, nullable=False)
+
+    is_edited = db.Column(db.Boolean, default=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    def __repr__(self):
-        return f"Comment [{self.video_id}] ({self.user}): {self.comment} "
+    parent_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    replies = db.relationship(
+        'Comment', backref=db.backref('parent', remote_side=[id]),
+        lazy='dynamic')
 
+    def add_reply(self, text: str, user: User):
+        return Comment(comment=text, parent=self, video_id=self.video_id, user=user)
+
+    def __repr__(self):
+        return f"Comment [{self.video_id}] ({self.user}): {self.comment}"
+
+    """
+    from ReYoutube.utils import youtube_date_format
+
+    
     # for the lazy data loading
     def to_dict(self):
+        return [self.id, serialize_replies(self.replies)]
         return {"id": self.id,
                 "video_id": self.video_id,
                 "created_at": [self.created_at, youtube_date_format(self.created_at)],
                 "comment": self.comment,
                 "user_id": self.user_id,
-                "user": self.user.to_dict()}
-
+                "user": self.user.to_dict(),
+                "replies": serialize_replies(self.replies)}
+    """
+# performance??
+def serialize_replies(replies):
+    d = []
+    for reply in replies:
+        d.append(reply.to_dict())
+    return d
 
 class OAuth(OAuthConsumerMixin, db.Model):
     provider_user_id = db.Column(db.String(256), unique=True, nullable=False)

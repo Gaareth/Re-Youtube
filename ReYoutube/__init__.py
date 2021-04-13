@@ -1,18 +1,32 @@
 from flask import Flask
+from functools import lru_cache
+from .Blueprints import google_auth
 
-from .models import db, login_manager
-from .Blueprints import google_auth, comment_api
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object("config.TestingConfig")
-app.register_blueprint(google_auth.blueprint, url_prefix="/login")
-app.register_blueprint(comment_api.blueprint, url_prefix="/api/comments")
 
+app.register_blueprint(google_auth.blueprint, url_prefix="/login")
+
+from .models import db, login_manager, Comment, User
+from .utils import youtube_date_format
 db.init_app(app)
+
 with app.app_context():
     db.create_all()
+
 
 login_manager.init_app(app)
 
 # Import routes
 from . import views
+
+
+@app.template_filter('str_slice')
+def _jinja2_filter_string_slice(string: str, first, last):
+    return string[int(first): int(last)]
+
+@app.template_filter('yt_strftime')
+def _jinja2_filter_youtube_datetime(date_time: datetime, fmt=None):
+    return youtube_date_format(date_time)

@@ -8,7 +8,10 @@ class Config(object):
     GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
     GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 
-    COMMENT_BATCH_SIZE = 25  # comment to return per request
+    COMMENT_BATCH_SIZE = 10  # comment to return per request
+    MAX_COMMENT_INDENTATION_LEVEL = 3
+    COMMENT_MAX_SHOW = 240  # max characters showed in a comment before hidden by collapsable
+
 
 class ProductionConfig(Config):
     pass

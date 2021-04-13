@@ -17,7 +17,7 @@ blueprint = make_google_blueprint(
 @oauth_authorized.connect_via(blueprint)
 def google_logged_in(blueprint, token):
     if not token:
-        flash("Failed to log in.", category="error")
+        flash("Failed to log in.", category="danger")
         return False
 
     resp = blueprint.session.get("/oauth2/v1/userinfo")
@@ -26,7 +26,7 @@ def google_logged_in(blueprint, token):
 
     if not resp.ok or not resp_yt.ok:
         msg = "Failed to fetch user info."
-        flash(msg, category="error")
+        flash(msg, category="danger")
         return False
 
     user_id = resp.json()["id"]
@@ -34,7 +34,7 @@ def google_logged_in(blueprint, token):
     info_yt = resp_yt.json()
     if "items" not in info_yt:
         #TODO: implement google account usage
-        flash("Please choose an actual Youtube Account!")
+        flash("Please choose an actual Youtube Account!", "danger")
         return False
 
     user_name = info_yt["items"][0]["snippet"]["title"]
@@ -49,7 +49,7 @@ def google_logged_in(blueprint, token):
 
     if oauth.user:
         login_user(oauth.user)
-        flash("Successfully signed in.")
+        flash("Successfully signed in.", "success")
     else:
         # Create a new local user account for this user
         user = User(username=user_name, profile_picture=thumbnail)
@@ -60,7 +60,7 @@ def google_logged_in(blueprint, token):
         db.session.commit()
         # Log in the new local user account
         login_user(user)
-        flash("Successfully signed in.")
+        flash("Successfully signed in.", "success")
 
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
