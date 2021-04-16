@@ -31,6 +31,14 @@ def login():
 def index():
     return render_template("index.html")
 
+@app.route("/tos")
+def tos():
+    return render_template("tos.html")
+
+@app.route("/privacy_policy")
+def privacy_policy():
+    return render_template("privacyPolicy.html")
+
 
 @app.route("/watch", methods=["GET", "POST"])
 @app.route("/watch/page/<int:page>", methods=["GET", "POST"])
@@ -61,3 +69,5 @@ def watch(page=1):
                                current_sorting=sort_by)
     else:
         return redirect(url_for("index"))
+
+
