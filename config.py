@@ -11,7 +11,7 @@ class Config(object):
     PAGE_MAX_COMMENTS = 50  # max comments per page
     MAX_COMMENT_INDENTATION_LEVEL = 3  # how many replies to a comment with a visual indent are allowed
     COMMENT_MAX_SHOW = 240  # max characters showed in a comment before hidden by collapsable
-    ALLOWED_HOSTS = ["127.0.0.1:5000"]
+    ALLOWED_HOSTS = ["127.0.0.1:5000", "reyoutube.herokuapp.com"]
 
 class ProductionConfig(Config):
     pass
