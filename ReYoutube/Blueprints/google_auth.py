@@ -18,6 +18,7 @@ blueprint = make_google_blueprint(
 # create/login local user on successful OAuth login
 @oauth_authorized.connect_via(blueprint)
 def google_logged_in(blueprint, token):
+    print("CONNNNECCCCCTCTTTCTTCTCT")
     if not token:
         flash("Failed to log in.", category="danger")
         return redirect_next()

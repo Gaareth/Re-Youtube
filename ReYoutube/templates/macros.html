@@ -75,11 +75,29 @@
                                             <input type="hidden" name="comment_id" value="{{comment.id}}">
                                             <input type="hidden" name="video_id" value="{{video_id}}">
 
-                                            <button class="btn p-0 fs-6 underline_animation" type="submit"
-                                                style="margin-bottom: .5rem; margin-top: -0.4rem; color: red;">
+                                            <button class="btn p-0 fs-6 underline_animation"
+                                                    data-bs-toggle="modal" data-bs-target="#delete-{{comment.id}}-confirm"
+                                                    style="margin-bottom: .5rem; margin-top: -0.4rem; color: red;">
                                                 Delete
                                             </button>
-                                            <!-- TODO: modal -->
+                                            <!-- Comment deletion confirm modal -->
+                                            <div id="delete-{{comment.id}}-confirm" class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                              <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Delete comment</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    Delete your comment permanently?
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <a type="button" class="btn btn-danger" href="{{ url_for("logout") }}">Delete</a>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
                                         </form>
                                     {% endif %}
                                 </div>
