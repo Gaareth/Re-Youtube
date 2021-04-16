@@ -1,3 +1,26 @@
+.comment-interaction {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: black;
+    stroke-width: 2;
+}
+
+.comment-interaction:hover {
+    fill: black;
+    stroke: black;
+}
+
+.comment-interaction:active {
+    fill: #0d6efd;
+    stroke: #0d6efd;
+}
+
+/* When comment is upvoted/downvoted */
+.interacted-active {
+    fill: #0d6efd;
+    stroke: #0d6efd;
+}
 
 
 .read_more p.collapse:not(.show) {

@@ -1,11 +1,13 @@
-{% from "macros.html" import render_comments with context%}
+{% from "macros.html" import render_comments, paginate with context%}
 {% extends "layout.html" %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <meta name="video_id" content="{{video_id}}">
+
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link href="/static/styles/watch.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="/static/edit.js"></script>
-    <link href="/static/watch.css" rel="stylesheet">
 
 {% endblock %}
 
@@ -13,7 +15,7 @@
 
 {% block content %}
 <div class="container-sm">
-      <div id="video-container" class="ratio ratio-16x9">
+      <div id="video-container" class="ratio ratio-16x9 my-3">
             <iframe width="1280" height="720" loading="lazy"
                 src="https://www.youtube.com/embed/{{video_id}}"
                 title="YouTube video player" frameborder="0"
@@ -24,8 +26,44 @@
 
     <hr>
 
-      <div class="rounded container-sm">
-             <div id="comment_input" class="mt-5">
+      <div class="rounded container-fluid p-0">
+            <div class="d-flex flex-row pt-3" id="comments-general-info">
+                <div class="pe-3 ps-1 d-flex flex-column justify-content-center">
+                    <p class="m-0">{{num_comments}} Comment{{'s' if num_comments > 1 else ''}}</p>
+                </div>
+                <div class="dropdown" id="comments-sort-dropdown">
+                        <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sort By
+                        </button>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li>
+                                <form action="{{url_for('watch')}}" method="POST">
+                                    <input type="hidden" name="video_id" value={{video_id}}>
+                                    <input type="hidden" name="action" value="sort">
+                                    <input type="hidden" name="sort_by" value="upload_date">
+                                    <input type="hidden" name="sort_order" value="{{current_order}}">
+                                    <button type="submit" class="dropdown-item {{'active' if current_sorting == 'upload_date' else ''}}" href="#">
+                                        Upload Date ({{"Ascending" if current_order=="asc" else "Descending"}})
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{{url_for('watch')}}" method="POST">
+                                    <input type="hidden" name="video_id" value={{video_id}}>
+                                    <input type="hidden" name="action" value="sort">
+                                    <input type="hidden" name="sort_by" value="rating">
+                                    <input type="hidden" name="sort_order" value="{{current_order}}">
+                                    <button type="submit" class="dropdown-item {{'active' if current_sorting == 'rating' else ''}}" href="#">
+                                        Rating ({{"Ascending" if current_order=="asc" else "Descending"}})
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                 </div>
+            </div>
+
+             <div id="comment_input" class="pt-4">
                  <form class="input-group mb-3" action="{{url_for('watch', page=comments.page)}}" method="POST">
                     <input id="add-comment-input" type="text" class="form-control" name="message" placeholder="Comment message" aria-label="Comment message" aria-describedby="button-addon2">
                      <input type="hidden" name="action" value="add">
@@ -33,10 +71,8 @@
                      <button class="btn btn-outline-primary" type="submit" id="button-addon2">Send</button>
                  </form>
              </div>
-            <div>
-                {{num_comments}} Comments
-            </div>
-            <div id="comments" class="py-3">
+
+            <div id="comments" class="py-2">
 
                   <!-- cool spinner
                   <div class="d-flex justify-content-center mb-3">
@@ -44,53 +80,86 @@
                   </div>-->
                 {{ render_comments(comments.items, 0, auto_collapse, comments.page) }}
 
-                <nav aria-label="Page navigation" class="my-3">
-                      <ul class="pagination d-flex justify-content-center">
-                            {% if comments.has_prev %}
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="{{url_for('watch', page=comments.prev_num)}}?v={{video_id}}">Previous</a>
-                                </li>
-                            {% endif %}
-
-                            {% for page_num in comments.iter_pages() %}
-                                {% if page_num %}
-                                    {% if page_num != comments.page %}
-                                        <li class="page-item">
-                                            <a class="page-link"
-                                               href="{{url_for('watch', page=page_num)}}?v={{video_id}}">{{page_num}}</a>
-                                        </li>
-                                    {% else %}
-                                        <li class="page-item active">
-                                            <a class="page-link"
-                                               href="{{url_for('watch', page=page_num)}}?v={{video_id}}">{{page_num}}</a>
-                                        </li>
-                                    {% endif %}
-                               {% else %}
-                                   <li>
-                                       <span class="ellipsis" style="white-space; nowrap; overflow: hidden; text-overflow: ellipsis">…</span>
-                                   </li>
-                               {% endif %}
-                            {% endfor %}
-
-
-                          {% if comments.has_next %}
-                            <li class="page-item">
-                                <a class="page-link"
-                                   href="{{url_for('watch', page=comments.next_num)}}?v={{video_id}}">Next</a>
-                            </li>
-                          {% endif %}
-                      </ul>
-
-                    {% if comments.items |length %}
-                        <p class="text-right mt-3">
-                           Showing page {{ comments.page }} of {{ comments.pages }}
-                        </p>
-                    {% endif %}
-                </nav>
+                {{ paginate(comments) }}
             </div>
       </div>
 
 </div>
+
+<script type="text/javascript">
+
+    function upvote_comment(c_id) {
+        {% if current_user.is_authenticated %}
+            const url = '{{url_for("comments_api.upvote_comment")}}';
+
+            send_post(url, {
+                comment_id: c_id,
+            }).then(function(res) {
+                if (!res.isError) {
+                    update_comment_votes(res, c_id);
+                }
+        })
+        {% endif %}
+    }
+
+    function downvote_comment(c_id) {
+       {% if current_user.is_authenticated %}
+            const url = '{{url_for("comments_api.downvote_comment")}}';
+
+            send_post(url, {
+                comment_id: c_id,
+            }).then(function(res) {
+                if (!res.isError) {
+                    update_comment_votes(res, c_id);
+                }
+        })
+        {% endif %}
+    }
+
+    function update_comment_votes(vote_info, c_id) {
+
+            // Update Downvote Icon and count
+            const downvote_icon = document.getElementById("comment-"+c_id+"-downvote-svg");
+
+            const downvote_element = document.getElementById("comment-"+c_id+"-downvote-count");
+            downvote_element.innerHTML = vote_info.downvotes;
+
+            if (vote_info.has_downvoted) {
+                downvote_icon.setAttribute("class", "comment-interaction interacted-active");
+            }else {
+                downvote_icon.setAttribute("class", "comment-interaction");
+            }
+
+            // Update Upvote Icon and count
+            const upvote_icon = document.getElementById("comment-"+c_id+"-upvote-svg");
+
+            const upvote_element = document.getElementById("comment-"+c_id+"-upvote-count");
+            upvote_element.innerHTML = vote_info.upvotes;
+
+            if (vote_info.has_upvoted) {
+                upvote_icon.setAttribute("class", "comment-interaction interacted-active");
+            }else {
+                upvote_icon.setAttribute("class", "comment-interaction");
+            }
+    }
+
+    function send_post(url, data) {
+        return fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+
+
+    }
+</script>
+
+<script>
+  feather.replace()
+</script>
 
 {% endblock %}

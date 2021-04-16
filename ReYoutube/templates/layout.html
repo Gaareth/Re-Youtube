@@ -2,55 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>{% block title %}{% endblock %} - ReYoutube</title>
 
     {% block extra_head %}{% endblock %}
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link href="/static/styles/utils.css" rel="stylesheet">
+    <link href="/static/styles/nav.css" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
-    <link href="/static/utils.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 </head>
 <body>
-    <header class="p-3 mb-3 border-bottom">
-        <div class="row">
-                <div class="col">
+    <header id="navbar-desktop" class="p-3 pb-2 mb-3 border-bottom" style="display:block;">
+        <div class="row justify-content-between">
+                <div class="col px-1">
                     <!-- TODO: create icon
                   <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
                     <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
                   </a>-->
 
-                    <a href="/" class="nav-link px-2" style="color: #dc3545;">Re:Youtube</a>
+                    <a href="/" class="navbar-brand px-2" style="color: #dc3545;">Re:Youtube</a>
                 </div>
-             <div class="col">
-                  <form class="col-12 col-lg-auto mb-3 mb-lg-0" style="min-width: 35%;"
-              action="/watch" method="GET">
-                <input type="search" class="form-control" placeholder="Search..." name="v">
-              </form>
-             </div>
+                <div class="col px-1">
+                        <form class="col-12 col-lg-auto mb-1 mb-lg-0" style="min-width: 35%;" action="/watch" method="GET">
+                            <input type="search" class="form-control" placeholder="Search..." name="v">
+                        </form>
+                </div>
 
             {% if current_user.is_authenticated %}
-               <div class="col text-end d-flex justify-content-end">
+               <div class="col text-end d-flex justify-content-end px-1">
                     <span class="px-2">{{current_user.username}}</span>
-                <div class="dropdown text-end">
-                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                      <img src={{current_user.profile_picture}} alt="mdo" width="32" height="32" class="rounded-circle">
-                    </a>
+                    <div class="dropdown text-end">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Onerror, in case the youtube profile picture does not load use the fallback-->
+                            <img src={{current_user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle"
+                                onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
+                        </a>
 
-                    <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                      <li><a class="dropdown-item" href="{{ url_for("logout") }}">Sign out</a></li>
-                    </ul>
-              </div>
+                        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                          <li>
+                              <a class="dropdown-item" style="color: var(--bs-red);" href=""
+                              data-bs-toggle="modal" data-bs-target="#sign-out-confirm">
+                                Sign out
+                              </a>
+                          </li>
+                        </ul>
+                    </div>
                </div>
             {% else %}
-                <div class="col text-end">
-                    <a class="btn btn-outline-primary" href="{{ url_for("google.login") }}">Login</a>
+                <div class="col text-end px-1">
+                    <a class="btn btn-outline-primary" href="{{ url_for("login") }}">Login</a>
                 </div>
             {% endif %}
 
       </div>
     </header>
+
+    <nav id="navbar-mobile" class="navbar navbar-expand-lg navbar-light border-bottom mb-3" style="display: none;">
+      <div class="container-fluid">
+       <a href="/" class="navbar-brand" style="color: #dc3545;">Re:Youtube</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if current_user.is_authenticated %}
+                    <div class="nav-item d-flex">
+                       <div class="d-flex align-items-center">
+                            <div>
+                                <img src={{current_user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle img-fluid"
+                                    onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
+                            </div>
+                            <p class="col p-2 m-0">{{current_user.username}}</p>
+                       </div>
+                   </div>
+
+                    <li class="nav-item py-2">
+                        <a class="underline_animation px-0" href="" style="color: var(--bs-red);" data-bs-toggle="modal" data-bs-target="#sign-out-confirm">
+                            Sign out
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item py-2">
+                      <a class="underline_animation px-0" style="color: var(--bs-primary);" href="{{ url_for("login") }}">Login</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+          <form class="d-flex" style="min-width: 35%;" action="/watch" method="GET">
+              <input type="search" class="form-control me-2" placeholder="Search..." name="v">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+
+
+<!-- Sign Out confirm modal -->
+<div id="sign-out-confirm" class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sign out</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to sign out?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a type="button" class="btn btn-danger" href="{{ url_for("logout") }}">Sign Out</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <div class="container-sm" id="alert-messages">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -64,8 +134,6 @@
           {% endif %}
     {% endwith %}
     </div>
-
-
 
      {% block content %}{% endblock %}
 

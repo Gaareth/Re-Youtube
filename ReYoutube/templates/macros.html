@@ -8,16 +8,40 @@
             >
 
                 <div class="card animate__animated animate__zoomIn animate__faster">
-                     <!-- TODO: implement profile picture which does not look retarded
-                      <div class="col">
-                          <img id="comment-picture", src="" alt="..." class="rounded-circle" width="32" height="32">
-                      </div>
-                      -->
-                      <div class="card-body">
+
+
+                        <div class="card-img-top d-flex">
+                            <!-- TODO: implement profile picture which does not look retarded
+                            <div class="profile-picture ps-1 pt-2">
+                                <img src={{comment.user.profile_picture}} alt="profile picture" width="26" height="26" class="rounded-circle img-fluid"
+                                    onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
+                            </div>
+                            -->
+                            <div class="card-body">
                             <div class="d-flex flex-row justify-content-between">
-                                <h6 class="card-subtitle mb-2 text-muted" id="comment-title">
-                                    {{comment.user.username}} - {{comment.created_at|yt_strftime}} {{"(Edited)" if comment.is_edited else ""}}
-                                </h6>
+                                <!-- Comment Username and Creation date-->
+                                <div class="btn-group dropup" href="">
+                                    <h6 class="card-subtitle mb-2 text-muted" id="comment-title" data-bs-toggle="dropdown">
+                                        {{comment.user.username}} - {{comment.created_at|yt_strftime}} {{"(Edited)" if comment.is_edited else ""}}
+                                    </h6>
+
+
+                                    <ul class="dropdown-menu">
+                                       <li>
+                                           <div class="d-flex">
+                                               <div class="profile-picture ps-1 pe-2" style="padding: .25rem 1rem;">
+                                                <img src={{comment.user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle img-fluid"
+                                                    onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
+                                            </div>
+                                                <a class="dropdown-item ps-0">Userid: {{comment.user.id}}</a>
+                                           </div>
+                                       </li>
+                                    </ul>
+                                </div>
+
+
+
+
 
                                 <div class="comment-options d-flex flex-row">
                                     {% if comment.user == current_user %}
@@ -61,14 +85,14 @@
                                 </div>
                             </div>
 
-                            <div class="container">
+                            <div class="container m-0">
                               <div class="row">
                                 <div class="col p-0">
                                   <div class="read_more">
-                                        <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
+                                        <p class="collapse card-text my-0">
                                             <a href="#comment-{{comment.parent.id}}">{% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}</a>
-    
-                                            {{comment.comment}}
+                                            <span id="comment-content-{{comment.id}}" >{{comment.comment}}</span>
+
                                         </p>
                                       {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
                                         <a class="collapsed btn btn-link p-0 mt-1 mb-2 read_more_link" data-bs-toggle="collapse"
@@ -82,22 +106,60 @@
                               </div>
                             </div>
 
-                            <div id="comment-{{comment.id}}-edit" class="comment-edit-area form-floating" style="display: none;">
-                                    <textarea style="height: 100px;" class="form-control" placeholder="Write a new comment content here" id="comment-{{comment.id}}-input-textarea"></textarea>
-                                    <label for="comment-{{comment.id}}-input-textarea">Comment content</label>
-                            </div>
+                          <!-- Textarea for editing a comment-->
+                          <div id="comment-{{comment.id}}-edit" class="comment-edit-area form-floating" style="display: none;">
+                                <textarea style="height: 100px;" class="form-control" placeholder="Write a new comment content here" id="comment-{{comment.id}}-input-textarea"></textarea>
+                                <label for="comment-{{comment.id}}-input-textarea">Comment content</label>
+                          </div>
 
-                          <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse"
-                                  data-bs-target="#reply-input-{{comment.id}}"
-                                  aria-expanded="false" aria-controls=".reply-input">
-                             Reply
-                          </button>
+                          <div class="comment-interactions d-flex pt-2">
+                              <!--TODO: implement comment like and dislike options-->
+                              <div class="comments-upvote pe-3">
+                                    <button class="btn btn-link p-0  comments-upvote-button" type="button" data-bs-toggle="collapse"
+                                        aria-expanded="false" aria-controls=".reply-input" onclick="upvote_comment({{comment.id}})">
+                                        <svg data-feather="thumbs-up" id="comment-{{comment.id}}-upvote-svg" class="comment-interaction
+                                        {% if current_user.is_authenticated %}
+                                            {{'interacted-active' if current_user.has_upvoted_comment(comment)}}
+                                        {% endif %}">
+                                        </svg>
+                                    </button>
+                                    <span class="align-bottom" id="comment-{{comment.id}}-upvote-count" style="font-size: 0.85rem !important;">
+                                        {{comment.upvotes}}
+                                    </span>
+                              </div>
 
+                              <div class="comments-downvote pe-3">
+
+                                    <button class="btn btn-link p-0 pe-1" type="button" data-bs-toggle="collapse"
+                                        aria-expanded="false" aria-controls=".reply-input" onclick="downvote_comment({{comment.id}})">
+                                        <svg data-feather="thumbs-down" id="comment-{{comment.id}}-downvote-svg" class="comment-interaction
+                                         {% if current_user.is_authenticated %}
+                                            {{'interacted-active' if current_user.has_downvoted_comment(comment)}}
+                                        {% endif %}">>
+                                        </svg>
+                                    </button>
+
+                                    <span class="align-bottom" id="comment-{{comment.id}}-downvote-count" style="font-size: 0.85rem !important;">
+                                        {{comment.downvotes}}
+                                    </span>
+                              </div>
+
+                              <div class="comments-reply pt-1">
+                                    <button class="btn btn-link p-0 align-top" type="button" data-bs-toggle="collapse"
+                                          data-bs-target="#reply-input-{{comment.id}}"
+                                          aria-expanded="false" aria-controls=".reply-input">
+                                        Reply
+                                    </button>
+                              </div>
+                          </div>
 
                       </div>
+                        </div>
+
+
 
                      {% if comment.replies|list|length > 0%}
-                          <button class="btn btn-link p-0" type="button" data-bs-toggle="collapse"
+                          <button class="btn btn-link p-0 dropdown-toggle" type="button" data-bs-toggle="collapse"
                                   data-bs-target="#comment-replies-{{comment.id}}"
                                   aria-expanded="false" aria-controls="comment-replies-{{comment.id}}">
                              Show {{ comment.replies|list|length }} more replies
@@ -129,3 +191,51 @@
 
     {%- endfor %}
 {%- endmacro %}
+
+
+{% macro paginate(comments) %}
+    <nav aria-label="Page navigation" class="my-3">
+                      <ul class="pagination d-flex justify-content-center">
+                            {% if comments.has_prev %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{{url_for('watch', page=comments.prev_num)}}?v={{video_id}}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            {% for page_num in comments.iter_pages() %}
+                                {% if page_num %}
+                                    {% if page_num != comments.page %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="{{url_for('watch', page=page_num)}}?v={{video_id}}">{{page_num}}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item active">
+                                            <a class="page-link"
+                                               href="{{url_for('watch', page=page_num)}}?v={{video_id}}">{{page_num}}</a>
+                                        </li>
+                                    {% endif %}
+                               {% else %}
+                                   <li>
+                                       <span class="ellipsis" style="white-space; nowrap; overflow: hidden; text-overflow: ellipsis">…</span>
+                                   </li>
+                               {% endif %}
+                            {% endfor %}
+
+
+                          {% if comments.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{url_for('watch', page=comments.next_num)}}?v={{video_id}}">Next</a>
+                            </li>
+                          {% endif %}
+                      </ul>
+
+                    {% if comments.items |length %}
+                        <p class="text-right mt-3">
+                           Showing page {{ comments.page }} of {{ comments.pages }}
+                        </p>
+                    {% endif %}
+                </nav>
+{% endmacro %}

@@ -17,15 +17,19 @@ function edit_comment(comment_id) {
     var comment_content = document.getElementById("comment-content-"+comment_id);
 
     if (comment_edit_textarea.style.display == "block") {
+    //Pressed Abort
         comment_edit_textarea.style.display = "none";
         edit_option.innerHTML = "Edit";
+        edit_option.style = "margin-bottom: .5rem; margin-top: -0.4rem;";
 
         comment_content.style.display = "block";
 
         save_option.style.display = "none";
     }else {
+    // Pressed Edit
         comment_edit_textarea.style.display = "block";
         edit_option.innerHTML = "Abort";
+        edit_option.style = "margin-bottom: .5rem; margin-top: -0.4rem; color: black;";
 
         comment_content.style.display = "none";
 

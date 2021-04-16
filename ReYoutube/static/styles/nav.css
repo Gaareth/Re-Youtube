@@ -1,0 +1,9 @@
+@media screen and (max-width: 500px) {
+  #navbar-mobile {
+    display: block !important;
+  }
+
+  #navbar-desktop {
+    display: none !important;
+  }
+}

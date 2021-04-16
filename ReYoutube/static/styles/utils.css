@@ -1,0 +1,46 @@
+.underline_animation {
+  text-decoration: none;
+  position: relative;
+  color: #3366FF;
+}
+
+.underline_animation:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  border-bottom: 2px solid #3366FF;
+  transition: 0.4s;
+}
+
+.underline_animation:hover:after {
+  width: 100%;
+}
+
+custom_tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.custom_tooltip .custom_tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.custom_tooltip:hover .custom_tooltiptext {
+  visibility: visible;
+}

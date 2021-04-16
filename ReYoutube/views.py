@@ -1,10 +1,10 @@
-from ReYoutube import app
-from flask import render_template
-from flask_login import login_required, logout_user, current_user, user_logged_in
-from flask import Flask, redirect, url_for, flash, render_template, request, jsonify, make_response
+from flask import redirect, url_for, flash, render_template, request, session
+from flask_login import login_required, logout_user, current_user
+from is_safe_url import is_safe_url
 
+from ReYoutube import app
 from . import utils
-from .models import User, Comment, db
+from .models import Comment
 
 
 @app.route("/logout")
@@ -12,7 +12,19 @@ from .models import User, Comment, db
 def logout():
     logout_user()
     flash("You have logged out", "primary")
-    return redirect(url_for("index"))
+    next_url = request.referrer
+    if not is_safe_url(next_url, allowed_hosts=app.config["ALLOWED_HOSTS"]):
+        next_url = url_for("index")
+    return redirect(next_url)
+
+
+@app.route("/login")
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    # Redirect to referrer url after login
+    session['next_url'] = request.referrer
+    return redirect(url_for("google.login"))
 
 
 @app.route("/")
@@ -24,43 +36,28 @@ def index():
 @app.route("/watch/page/<int:page>", methods=["GET", "POST"])
 def watch(page=1):
     if request.method == "POST":
-        action = request.form["action"]
-        video_id = request.form["video_id"]
-        print("Action", action)
-        if current_user.is_authenticated:
-            comment_message = request.form.get("message")
-            comment_id = request.form.get("comment_id")
-
-            comment_parent = None
-            open_all_replies = ""
-            if comment_id is not None:
-                comment_parent = Comment.query.filter_by(id=comment_id).first().parent
-                open_all_replies = "&auto_collapse=False"
-
-            url_params = f"{open_all_replies if action == 'reply' or comment_parent is not None else ''}" \
-                         f"#comment-{comment_id}"
-
-            if action == "add":
-                utils.add_comment(comment_message, video_id, current_user)
-            elif action == "edit":
-                utils.edit_comment(comment_id, comment_message)
-            elif action == "delete":
-                utils.delete_comment(comment_id)
-            elif action == "reply":
-                utils.add_reply(comment_message, current_user, comment_id)
-
-            # Scroll to the interacted comment or redirect to the correct page
-            return redirect(f"{url_for('watch', page=page)}?v={video_id}{url_params if comment_id is not None else ''}")
-        else:
-            flash("Please login first", "danger")
-        return redirect(f"{url_for('watch', page=page)}?v={video_id}")
+        return utils.process_post_action(request, page)
 
     if video_id := request.args.get("v"):
-        comment_query = Comment.query.filter_by(video_id="1xIaoqxiZRA")
+        comment_query = Comment.query.filter_by(video_id=video_id)
         num_comments = comment_query.count()
-        comments = comment_query.filter_by(parent=None).order_by(Comment.created_at.desc()).\
-            paginate(page=page, per_page=app.config['COMMENT_BATCH_SIZE'], error_out=False)
-        return render_template("watch.html", comments=comments, auto_collapse=request.args.get("auto_collapse"),
-                               video_id=video_id, num_comments=num_comments)
+        # Choose the order contrary to the current used one
+        # In order to change the order from Asc to Desc.
+        current_sort_order = request.args.get("o", "asc")
+        sort_options = {
+            "upload_date": Comment.created_at.desc() if current_sort_order == "asc" else Comment.created_at.asc(),
+            "rating": Comment.rating.desc() if current_sort_order == "asc" else Comment.rating.asc()
+        }
+        sort_by = request.args.get("s", "upload_date")
+
+        comments = comment_query.filter_by(parent=None). \
+            order_by(sort_options.get(sort_by)). \
+            paginate(page=page, per_page=app.config['PAGE_MAX_COMMENTS'], error_out=False)
+
+        return render_template("watch.html",
+                               comments=comments, auto_collapse=request.args.get("auto_collapse"),
+                               video_id=video_id, num_comments=num_comments,
+                               current_order=f"{'asc' if current_sort_order == 'desc' else 'desc'}",
+                               current_sorting=sort_by)
     else:
         return redirect(url_for("index"))
