@@ -1,7 +1,6 @@
 from flask import Flask
-from functools import lru_cache
 from .Blueprints import google_auth, comments_api
-
+from sqlalchemy import exc
 from datetime import datetime
 
 app = Flask(__name__)
@@ -16,7 +15,10 @@ from .utils import youtube_date_format
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except exc.OperationalError:
+        print("Table already exists!")
 
 
 login_manager.init_app(app)
