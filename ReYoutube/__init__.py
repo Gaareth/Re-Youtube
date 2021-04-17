@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, session, request, redirect
 from .Blueprints import google_auth, comments_api
 from sqlalchemy import exc
 from datetime import datetime
@@ -33,6 +33,14 @@ login_manager.init_app(app)
 
 # Import routes
 from . import views
+
+
+@app.before_request
+def force_https():
+    # enfore https by redirecting, except for localhost
+    if request.endpoint in app.view_functions and not request.is_secure and \
+            not request.url_root in ["http://localhost:5000/", "http://0.0.0.0:5000/"]:
+        return redirect(request.url.replace('http://', 'https://'))
 
 
 @app.context_processor
