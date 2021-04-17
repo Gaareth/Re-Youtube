@@ -1,6 +1,6 @@
 # Re-Youtube
 Comments for youtube videos without comment function <br>
-A more or less working example can be found under: ![ReYoutube](https://reyoutube.herokuapp.com/)
+A more or less working example can be found under: [ReYoutube!](https://reyoutube.herokuapp.com/)
 
 # WIP
 Pull requests are welcome
