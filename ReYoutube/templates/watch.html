@@ -4,7 +4,6 @@
 {% block extra_head %}
     <meta name="video_id" content="{{video_id}}">
 
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link href="/static/styles/watch.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="/static/edit.js"></script>
@@ -17,11 +16,15 @@
 <div class="container-sm">
       <div id="video-container" class="ratio ratio-16x9 my-3">
             <iframe width="1280" height="720" loading="lazy"
-                src="https://www.youtube.com/embed/{{video_id}}"
+                src="https://www.youtube-nocookie.com/embed/{{video_id}}"
                 title="YouTube video player" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
             </iframe>
+
+        <!--TODO: use invidious embed
+        <iframe id='ivplayer' width='640' height='360' src='https://invidious.xyz/embed/{{video_id}}' style='border:none;'></iframe>
+          -->
       </div>
 
     <hr>
@@ -32,11 +35,11 @@
                     <p class="m-0">{{num_comments}} Comment{{'s' if num_comments != 1 else ''}}</p>
                 </div>
                 <div class="dropdown" id="comments-sort-dropdown">
-                        <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuSortButton" data-bs-toggle="dropdown" aria-expanded="false">
                             Sort By
                         </button>
 
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuSortButton">
                             <li>
                                 <form action="{{url_for('watch')}}" method="POST">
                                     <input type="hidden" name="video_id" value={{video_id}}>
@@ -158,8 +161,5 @@
     }
 </script>
 
-<script>
-  feather.replace()
-</script>
 
 {% endblock %}

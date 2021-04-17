@@ -1,7 +1,18 @@
-from flask import Flask
+from flask import Flask, session
 from .Blueprints import google_auth, comments_api
 from sqlalchemy import exc
 from datetime import datetime
+
+from .models import db, login_manager, Comment, User
+from .utils import youtube_date_format
+
+import enum
+
+
+class AppTheme(enum.Enum):
+    DARK = 0
+    WHITE = 1
+
 
 app = Flask(__name__)
 app.config.from_object("config.TestingConfig")
@@ -9,9 +20,7 @@ app.config.from_object("config.TestingConfig")
 app.register_blueprint(google_auth.blueprint, url_prefix="/login")
 app.register_blueprint(comments_api.blueprint)
 
-from .models import db, login_manager, Comment, User
-from .utils import youtube_date_format
-
+# Initialize Database
 db.init_app(app)
 
 with app.app_context():
@@ -21,13 +30,15 @@ with app.app_context():
         print("Table already exists!")
 
 login_manager.init_app(app)
+
 # Import routes
 from . import views
 
 
 @app.context_processor
 def inject_stage_and_region():
-    return dict(current_year=datetime.now().year)
+    return dict(current_year=datetime.now().year,
+                dark_theme=session.get("app_theme", default=AppTheme.WHITE.value) == AppTheme.DARK.value)
 
 
 @app.template_filter('str_slice')

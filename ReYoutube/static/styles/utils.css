@@ -44,3 +44,29 @@ custom_tooltip {
 .custom_tooltip:hover .custom_tooltiptext {
   visibility: visible;
 }
+
+footer {
+    width: 100%
+}
+
+.card:hover {
+    box-shadow: 0 .175rem .75rem rgba(0,0,0,.1) !important;
+}
+
+.card {
+   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+.btn-noborder {
+        padding: 0;
+    border: none;
+    background: none;
+}
+
+input[type="search"] {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+input[type="search"]:hover {
+    box-shadow: 0 .175rem .75rem rgba(0,0,0,.1) !important;
+}

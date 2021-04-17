@@ -2,7 +2,7 @@ from flask import redirect, url_for, flash, render_template, request, session
 from flask_login import login_required, logout_user, current_user
 from is_safe_url import is_safe_url
 
-from ReYoutube import app
+from ReYoutube import app, AppTheme
 from . import utils
 from .models import Comment
 
@@ -31,13 +31,30 @@ def login():
 def index():
     return render_template("index.html")
 
+
 @app.route("/tos")
 def tos():
     return render_template("tos.html")
 
+
 @app.route("/privacy_policy")
 def privacy_policy():
     return render_template("privacyPolicy.html")
+
+
+@app.route("/set_theme", methods=["POST"])
+def set_app_theme():
+    # toggle app theme
+    current_theme = session.get("app_theme")
+
+    if current_theme == AppTheme.WHITE.value or current_theme is None:
+        session["app_theme"] = AppTheme.DARK.value
+    else:
+        session["app_theme"] = AppTheme.WHITE.value
+
+    # redirect to referrer (if safe)
+    next_url = request.referrer if is_safe_url(request.referrer, allowed_hosts=app.config["ALLOWED_HOSTS"]) else "/"
+    return redirect(next_url)
 
 
 @app.route("/watch", methods=["GET", "POST"])
@@ -69,5 +86,3 @@ def watch(page=1):
                                current_sorting=sort_by)
     else:
         return redirect(url_for("index"))
-
-

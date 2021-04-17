@@ -10,15 +10,22 @@
 
     <title>ReYoutube - {% block title %}{% endblock %}</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link href="/static/styles/utils.css" rel="stylesheet">
     <link href="/static/styles/nav.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 
+     {% if dark_theme %}
+        <link rel="stylesheet" type = "text/css" href="/static/styles/theme_dark.css">
+    {% else %}
+        <link rel="stylesheet" type = "text/css" href="/static/styles/theme_white.css">
+    {% endif %}
+
 </head>
-<body>
-    <header id="navbar-desktop" class="p-3 pb-2 mb-3 border-bottom" style="display:block;">
+<body class="background-color">
+    <header id="navbar-desktop" class="p-3 pb-3 mb-3 border-bottom background-color2" style="display:block;">
         <div class="row justify-content-between">
                 <div class="col px-1">
                     <!-- TODO: create icon
@@ -34,39 +41,56 @@
                         </form>
                 </div>
 
-            {% if current_user.is_authenticated %}
-               <div class="col text-end d-flex justify-content-end px-1">
-                    <span class="px-2">{{current_user.username}}</span>
-                    <div class="dropdown text-end">
-                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Onerror, in case the youtube profile picture does not load use the fallback-->
-                            <img src={{current_user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle"
-                                onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
-                        </a>
 
-                        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                          <li>
-                              <a class="dropdown-item" style="color: var(--bs-red);" href=""
-                              data-bs-toggle="modal" data-bs-target="#sign-out-confirm">
-                                Sign out
-                              </a>
-                          </li>
-                        </ul>
-                    </div>
-               </div>
-            {% else %}
-                <div class="col text-end px-1">
-                    <a class="btn btn-outline-primary" href="{{ url_for("login") }}">Login</a>
+            <div class="col d-flex justify-content-end px-1">
+                <!-- Theme Switcher-->
+                <div class="d-flex align-items-center px-2">
+                    <form action="/set_theme" method="POST">
+                        <button class="btn-noborder" type="submit">
+                            <svg class="theme-switcher pe-1" data-feather="{{'moon' if dark_theme else 'sun'}}"
+                                 style="width:28px;height: auto;">
+                            </svg>
+                        </button>
+                    </form>
                 </div>
-            {% endif %}
+                 <!-- End Theme Switcher-->
 
+                {% if current_user.is_authenticated %}
+                   <div class="text-end d-flex justify-content-end px-1">
+                        <div class="d-flex align-items-center ">
+                            <span class="px-2">{{current_user.username}}</span>
+                        </div>
+                        <div class="dropdown text-end d-flex align-items-center">
+                            <a href="#" class="d-block text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false"
+                            style="background-color: transparent !important;">
+                                <!-- Onerror, in case the youtube profile picture does not load use the fallback-->
+                                <img src={{current_user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle"
+                                    onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
+                            </a>
+
+                            <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
+                              <li>
+                                  <a class="dropdown-item" style="color: var(--bs-red);" href=""
+                                  data-bs-toggle="modal" data-bs-target="#sign-out-confirm">
+                                    Sign out
+                                  </a>
+                              </li>
+                            </ul>
+                        </div>
+                   </div>
+                {% else %}
+                    <div class="">
+                        <a class="btn btn-outline-primary" href="{{ url_for("login") }}">Login</a>
+                    </div>
+                {% endif %}
+            </div>
       </div>
     </header>
 
-    <nav id="navbar-mobile" class="navbar navbar-expand-lg navbar-light border-bottom mb-3" style="display: none;">
+    <nav id="navbar-mobile" class="navbar navbar-expand-lg navbar-light border-bottom mb-3 background-color2" style="display: none;">
       <div class="container-fluid">
        <a href="/" class="navbar-brand" style="color: #dc3545 !important;">Re:Youtube</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler {{'navbar-dark' if dark_theme else ''}}" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
@@ -87,11 +111,34 @@
                             Sign out
                         </a>
                     </li>
+
                 {% else %}
                     <li class="nav-item py-2">
                       <a class="underline_animation px-0" style="color: var(--bs-primary);" href="{{ url_for("login") }}">Login</a>
                     </li>
                 {% endif %}
+
+                <li class="nav-item py-2">
+                        <form class="form-check form-switch" action="/set_theme" method="POST">
+                            <input class="form-check-input input-black" type="checkbox" id="switchTheme" onclick="this.form.submit()"
+                                {% if dark_theme %}  checked="checked" {% endif %}
+                                       style="
+                                            background-color: var({{'' if not dark_theme else '--background-color-1'}}) !important;
+                                            border-color: var({{'--bs-primary' if not dark_theme else '--background-color-1'}}) !important;
+
+                                            {% if not dark_theme %}
+                                                /* Blue Circle */
+                                                background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='RGBA(13, 110, 253, 1)'/%3e%3c/svg%3e&quot;);
+                                            {% endif %}
+                                       ">
+
+                                <label class="form-check-label" for="switchTheme">
+                                    <svg class="pb-1 pe-1 theme-switcher" data-feather="{{'moon' if dark_theme else 'sun'}}" style="width:20px; height: auto;"></svg>
+                                    Dark Theme
+                                </label>
+
+                        </form>
+                </li>
 
             </ul>
           <form class="d-flex" style="min-width: 35%;" action="/watch" method="GET">
@@ -139,24 +186,31 @@
     {% endwith %}
     </div>
 
-     {% block content %}{% endblock %}
+    <div class="container-fluid" id="content">
+        {% block content %}{% endblock %}
+    </div>
 
+    <footer class="text-center text-lg-start d-flex justify-content-center"
+            style="font-size: 0.9rem; background-color: #171718;">
+        <!-- Copyright -->
+        <div class="text-center p-3 text-white">
+            © {{current_year}} Copyright:
+            <a class="text-white" style="text-decoration: none;" href="/"> ReYoutube</a>
+        </div>
+        <!-- Copyright -->
+
+        <div class="text-center p-3 text-white" >
+            <a class="text-white" style="text-decoration: none;" href="/privacy_policy">Privacy Policy</a>
+        </div>
+
+        <div class="text-center p-3 text-white" >
+            <a class="text-white" href="/tos" style="text-decoration: none;">Terms of Service</a>
+        </div>
+    </footer>
 </body>
 
-<footer class="bg-dark text-center text-lg-start d-flex justify-content-center" style="font-size: 0.9rem;">
-    <!-- Copyright -->
-    <div class="text-center p-3 text-white">
-        © {{current_year}} Copyright:
-        <a class="text-white" style="text-decoration: none;" href="/"> ReYoutube</a>
-    </div>
-    <!-- Copyright -->
+<script>
+  feather.replace()
+</script>
 
-    <div class="text-center p-3 text-white" >
-        <a class="text-white" style="text-decoration: none;" href="/privacy_policy">Privacy Policy</a>
-    </div>
-
-    <div class="text-center p-3 text-white" >
-        <a class="text-white" href="/tos" style="text-decoration: none;">Terms of Service</a>
-    </div>
-</footer>
 </html>

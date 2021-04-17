@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from flask import redirect, url_for, flash, render_template
 from flask_login import current_user
 
-from . import app
 from .models import Notification
 from .models import User, Comment, db
 

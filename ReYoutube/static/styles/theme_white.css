@@ -1,0 +1,11 @@
+.background-color {
+    background-color: white;
+}
+
+.theme-switcher {
+     color: orange;
+}
+
+.theme-switcher:hover {
+     color: #fcce16;
+}

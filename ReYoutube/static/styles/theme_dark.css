@@ -1,0 +1,81 @@
+:root {
+  --background-color-2: #020203;
+  --background-color-1: #0C0C0D;
+
+  /* Default background color */
+  --background-color: #121212;
+
+  --background-color1: #171718;
+  --background-color2: #1D1D1E;
+  --background-color3: #222223;
+  --background-color4: #242425;
+  --background-color5: #2B2C2C;
+}
+
+.background-color {
+    background-color: var(--background-color);
+    border-color: var(--background-color) !important;
+}
+
+.background-color2 {
+    background-color: var(--background-color2);
+    border-color: var(--background-color2) !important;
+}
+
+.background-color3 {
+    background-color: var(--background-color3);
+        border-color: var(--background-color3) !important;
+
+}
+
+.background-color4 {
+    background-color: var(--background-color4);
+        border-color: var(--background-color4) !important;
+
+}
+
+.background-color5 {
+    background-color: var(--background-color5);
+        border-color: var(--background-color5) !important;
+
+}
+
+
+.form-control, .form-control:focus {
+    background-color: var(--background-color4);
+    border-color: var(--background-color4);
+    caret-color: white;
+    color: white;
+}
+
+
+html, body {
+  color: white;
+}
+
+.dropdown-item {
+    background-color: var(--background-color5);
+    color: white;
+}
+
+.dropdown-menu {
+    background-color: var(--background-color5);
+}
+
+.dropdown-toggle, .dropdown-toggle:focus {
+    background-color: var(--background-color4);
+    border-color: var(--background-color4);
+}
+
+.input-black, .input-black:focus {
+    background-color: var(--background-color-1) !important;
+    border-color: var(--background-color-1) !important;
+}
+
+.theme-switcher {
+     color: rebeccapurple;
+}
+
+.theme-switcher:hover {
+     color: #59179b;
+}

@@ -74,7 +74,7 @@ def redirect_next():
     next_url = session.get("next_url", "/")
     print(next_url)
     if not is_safe_url(next_url, allowed_hosts=app.config["ALLOWED_HOSTS"]):
-        return abort(400)
+        return redirect("/")
     # redirect the user to `next_url`
     return redirect(next_url)
 
