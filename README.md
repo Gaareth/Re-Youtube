@@ -1,5 +1,6 @@
 # Re-Youtube
-Comments for youtube videos without comment function
+Comments for youtube videos without comment function <br>
+A more or less working example can be found under: [ReYoutube!](https://reyoutube.herokuapp.com/)
 
 # WIP
 Pull requests are welcome
@@ -12,7 +13,7 @@ Pull requests are welcome
 - ~Edit Comments~
 - ~Comment chains (Replies)~
 - visual changes (Profile picture for comments)
-- landing page
+- ~landing page~
 
 - ~perhaps rewrite the comment loading to a pagination based approach~
 - rewrite the youtube formatter function
@@ -20,3 +21,4 @@ Pull requests are welcome
 - ~either implement the login with pure google accounts or mention that it is not possible~
 
 - another name?
+- use invidious?
