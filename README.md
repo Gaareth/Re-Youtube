@@ -1,5 +1,5 @@
 # Re-Youtube
-Comments for youtube video without comment function
+Comments for youtube videos without comment function
 
 # WIP
 Pull requests are welcome
@@ -13,7 +13,6 @@ Pull requests are welcome
 - ~Comment chains (Replies)~
 - visual changes (Profile picture for comments)
 - landing page
-- improved search bar??
 
 - ~perhaps rewrite the comment loading to a pagination based approach~
 - rewrite the youtube formatter function

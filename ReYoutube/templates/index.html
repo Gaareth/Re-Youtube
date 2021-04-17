@@ -4,14 +4,92 @@
 
 {% block content %}
 
-<div class="container-fluid d-flex justify-content-center">
-  <div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">Search Bar</h5>
-    <p class="card-text">Currently the search bar only supports direct video ids.
-      So either put in a video id or use a direct link</p>
-    <a href="/watch?v=1xIaoqxiZRA" class="card-link">Example link</a>
+<div class="container-md">
+
+  <div id="re-youtube-header">
+        <div class="px-4 py-5 my-5 text-center">
+          <img class="d-block mx-auto mb-4" src="static/images/icon_black.png" alt=""
+               width="300px" height="auto">
+          <h1 class="display-5 fw-bold ">Re:Youtube</h1>
+          <div class="col-lg-7 mx-auto">
+              <p class="mb-4" style="font-size: 1.75rem; font-weight: 300;">
+                Comments for youtube videos with turned off comments
+              </p>
+          </div>
+      </div>
   </div>
-</div>
+
+  <hr>
+
+  <div id="re-youtube-section1" class="light-bg">
+        <div class="px-4 py-5 my-5">
+          <div class="col-lg-8 mx-auto">
+            <h1 class="display-5 fw-bold ">The: Solution</h1>
+          </div>
+          <div class="col-lg-8 mx-auto">
+              <p class="mb-4 pt-2" style="font-size: 1.5rem; font-weight: 300;">
+                Ever noticed that comments under a youtube video were turned off?
+              </p>
+
+              <img style="max-width: 100%;" class="d-block mx-auto mb-4" src="static/images/comments_turned_off.png">
+
+              <p class="mb-4" style="font-size: 1.2rem; font-weight: 300;">
+                    Must be pretty annoying huh?
+              </p>
+              <h4 class="fw-bold">
+                  The solution
+              </h4>
+              <p class="m-0 p-0" style="font-size: 1.15rem; font-weight: 300;">
+                  Just get the video id and search for it on
+                  <strong><span style="color: #dc3545 !important;">Re:Youtube</span></strong>.
+              </p>
+              <p class="mb-4" style="font-size: 1.15rem; font-weight: 300;">
+                  Either paste the id into the
+                  <button class="btn btn-link p-0 m-0"
+                          style="vertical-align: inherit !important; text-decoration: none;"
+                          onclick="document.getElementById('get-started-search-form').focus();">
+                      search field
+                  </button>
+                  or use a direct link:
+                  <a class="fw-normal" style="font-size: 1rem;" href="{{request.url}}watch?v=dQw4w9WgXcQ">{{request.url}}watch?v=dQw4w9WgXcQ</a>
+
+              </p>
+              <p class="m-0 p-0" style="font-size: 1.2rem;">
+                 We currently support:
+              </p>
+              <div class="row g-2 py-3">
+                  <div class="col-md-4">
+                        <h2 class="fw-bold" style="font-size:1.25rem"> Replies </h2>
+                        <p class="fw-light"> Reply to any comment you want</p>
+                  </div>
+
+                  <div class="col-md-4">
+                        <h2 class="fw-bold" style="font-size:1.25rem"> Edit, Delete </h2>
+                        <p class="fw-light"> Easily delete and edit all of your comments</p>
+                  </div>
+
+                  <div class="col-md-4">
+                        <h2 class="fw-bold" style="font-size:1.25rem"> Votes </h2>
+                        <p class="fw-light"> Up- or downvote comments.
+                            Sort by date or rating, ascending <strong>and</strong> descending</p>
+                  </div>
+
+
+              </div>
+
+              <h4>
+                  Get Started
+              </h4>
+
+                <form class="d-flex pt-3" style="min-width: 35%;" action="/watch" method="GET">
+                  <input id="get-started-search-form" type="search" class="form-control me-2" placeholder="Search..." name="v">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+          </div>
+      </div>
+  </div>
+
+
+
 </div>
 {% endblock %}

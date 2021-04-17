@@ -29,7 +29,7 @@
       <div class="rounded container-fluid p-0">
             <div class="d-flex flex-row pt-3" id="comments-general-info">
                 <div class="pe-3 ps-1 d-flex flex-column justify-content-center">
-                    <p class="m-0">{{num_comments}} Comment{{'s' if num_comments > 1 else ''}}</p>
+                    <p class="m-0">{{num_comments}} Comment{{'s' if num_comments != 1 else ''}}</p>
                 </div>
                 <div class="dropdown" id="comments-sort-dropdown">
                         <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
