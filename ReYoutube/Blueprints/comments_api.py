@@ -16,8 +16,9 @@ def handle_internal_error(e):
 
 @blueprint.errorhandler(werkzeug.exceptions.BadRequest)
 def handle_bad_request(e):
-    return jsonify({'isError': True, 'status': 400, 'statusText':
-        'Bad Request: The browser (or proxy) sent a request that this server could not understand.'}), 400
+    return jsonify({'isError': True, 'status': 400,
+                    'statusText': 'Bad Request: '
+                                  'The browser (or proxy) sent a request that this server could not understand.'}), 400
 
 
 @blueprint.route("/upvote_comment", methods=["POST"])
@@ -26,8 +27,9 @@ def upvote_comment():
     comment_id = request.json["comment_id"]
     comment = Comment.query.filter_by(id=comment_id).first()
     if comment is None:
-        return jsonify({'isError': True, 'status': 400, 'statusText':
-        'Bad Request: The browser (or proxy) sent a request that this server could not understand.'}), 400
+        return jsonify({'isError': True, 'status': 400,
+                        'statusText': 'Bad Request: '
+                                      'The browser (or proxy) sent a request that this server could not understand.'}), 400
 
     current_user.upvote(comment)
     db.session.add_all([comment, current_user])

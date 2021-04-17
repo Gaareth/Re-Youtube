@@ -20,11 +20,14 @@ with app.app_context():
     except exc.OperationalError:
         print("Table already exists!")
 
-
 login_manager.init_app(app)
 # Import routes
 from . import views
 
+
+@app.context_processor
+def inject_stage_and_region():
+    return dict(current_year=datetime.now().year)
 
 
 @app.template_filter('str_slice')
