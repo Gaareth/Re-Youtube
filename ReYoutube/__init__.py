@@ -26,7 +26,7 @@ db.init_app(app)
 with app.app_context():
     try:
         db.create_all()
-    except exc.OperationalError:
+    except (exc.OperationalError, exc.ProgrammingError):
         print("Table already exists!")
 
 login_manager.init_app(app)
