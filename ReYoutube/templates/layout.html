@@ -19,6 +19,9 @@
                                 {% endif %}
 
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start" aria-labelledby="notificationsDropDownButton">
+                                    <div class="d-flex justify-content-center border-bottom mb-2 pb-1">
+                                        <li style="color: {{'white' if dark_theme else 'black'}};">Notifications</li>
+                                    </div>
                                     {% for notification in current_user.get_notifications() %}
                                         <li class="my-1 border-bottom ">
                                             <a href="{{notification.link}}"
@@ -56,7 +59,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="google-site-verification" content="9WbT0TVaYoSvrmw0PAq6aa5CV-_zablR1i7qdYh6a8M" />
     <link rel="shortcut icon" type="image/x-icon" href="static/images/favicon.png">
 
     {% block extra_head %}{% endblock %}
