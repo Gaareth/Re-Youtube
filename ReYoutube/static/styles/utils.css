@@ -70,3 +70,18 @@ input[type="search"] {
 input[type="search"]:hover {
     box-shadow: 0 .175rem .75rem rgba(0,0,0,.1) !important;
 }
+
+.shake_on_hover:hover {
+
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-name: tada;
+    animation-name: tada;
+
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-duration: var(--animate-duration);
+    animation-duration: var(--animate-duration);
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
