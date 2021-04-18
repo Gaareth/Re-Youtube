@@ -1,3 +1,56 @@
+{% macro render_notifications() %}
+                {% if current_user.is_authenticated %}
+                    <!-- Notifications -->
+                    <div class="d-flex align-items-center ps-3 pe-3
+                    {{'shake_animation' if current_user.new_notifications() > 0 else ''}}">
+
+                            <div class="dropdown d-flex align-items-center">
+                                <button class="btn-noborder" type="submit" id="notificationsDropDownButton"
+                                        data-bs-toggle="dropdown" aria-expanded="false" >
+                                    <svg data-feather="bell"
+                                         style="color: {{'white' if dark_theme else 'black'}};">
+                                    </svg>
+                                </button>
+
+                                {% if current_user.new_notifications() > 0 %}
+                                     <span class="badge bg-danger mb-3">
+                                        {{current_user.new_notifications()}}
+                                    </span>
+                                {% endif %}
+
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start" aria-labelledby="notificationsDropDownButton">
+                                    {% for notification in current_user.get_notifications() %}
+                                        <li class="my-1 border-bottom ">
+                                            <a href="{{notification.link}}"
+                                               class="dropdown-item {{'active' if not notification.seen() }}">
+                                                <div class="d-flex flex-column">
+                                                    <span>
+                                                        {% if notification.sender.username|length <= config['NOTIFICATION_MAX_SHOW'] %}
+                                                            {{notification.sender.username}} replied:
+                                                        {% else %}
+                                                            {{notification.sender.username|str_slice(0, config['NOTIFICATION_MAX_SHOW'])}} replied:
+                                                        {% endif %}
+
+                                                        {% if notification.content|length <= config['NOTIFICATION_MAX_SHOW'] %}
+                                                            "{{notification.content}}"
+                                                        {% else %}
+                                                            "{{notification.content|str_slice(0, config['NOTIFICATION_MAX_SHOW'])}}"..
+                                                        {% endif %}
+                                                    </span>
+                                                    <span class="text-muted d-flex flex-wrap" style="font-size: 0.925rem;">
+                                                        {{notification.timestamp|yt_strftime}}
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                    </div>
+                    <!-- End Notifications -->
+                {% endif %}
+{% endmacro %}
+
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -15,7 +68,9 @@
     <link href="/static/styles/nav.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-     {% if dark_theme %}
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+    {% if dark_theme %}
         <link rel="stylesheet" type = "text/css" href="/static/styles/theme_dark.css">
     {% else %}
         <link rel="stylesheet" type = "text/css" href="/static/styles/theme_white.css">
@@ -23,7 +78,8 @@
 
 </head>
 <body class="background-color">
-    <header id="navbar-desktop" class="p-3 pb-3 mb-3 border-bottom background-color2" style="display:block;">
+    <header id="navbar-desktop" class="p-3 pb-3 mb-3 border-bottom background-color2" style="display:block;
+    max-height: 80px;">
         <div class="row justify-content-between">
                 <div class="col px-1">
                     <!-- TODO: create icon
@@ -42,18 +98,23 @@
 
             <div class="col d-flex justify-content-end px-1">
                 <!-- Theme Switcher-->
-                <div class="d-flex align-items-center px-2 shake_on_hover">
+                <div class="d-flex align-items-center px-2">
                     <form action="/set_theme" method="POST">
-                        <button class="btn-noborder" type="submit">
-                            <svg class="theme-switcher pe-1" data-feather="{{'moon' if dark_theme else 'sun'}}"
+                        <button class="btn-noborder " type="submit">
+                            <svg class="theme-switcher pe-1 scale_on_hover " data-feather="{{'moon' if dark_theme else 'sun'}}"
                                  style="width:28px;height: auto;">
                             </svg>
                         </button>
                     </form>
                 </div>
-                 <!-- End Theme Switcher-->
+                <!-- End Theme Switcher-->
 
                 {% if current_user.is_authenticated %}
+
+                    <!-- Notifications -->
+                        {{ render_notifications() }}
+                    <!-- End Notifications -->
+
                    <div class="text-end d-flex justify-content-end px-1">
                         <div class="d-flex align-items-center ">
                             <span class="px-2">{{current_user.username}}</span>
@@ -88,9 +149,12 @@
     <nav id="navbar-mobile" class="navbar navbar-expand-lg navbar-light border-bottom mb-3 background-color2" style="display: none;">
       <div class="container-fluid">
        <a href="/" class="navbar-brand" style="color: #dc3545 !important;">Re:Youtube</a>
-        <button class="navbar-toggler {{'navbar-dark' if dark_theme else ''}}" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="d-flex justify-content-end">
+            {{ render_notifications() }}
+            <button class="navbar-toggler {{'navbar-dark' if dark_theme else ''}}" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if current_user.is_authenticated %}
@@ -207,12 +271,11 @@
     </footer>
 </body>
 
-<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 
 <script>
-  feather.replace()
+  feather.replace();
 </script>
 
 </html>

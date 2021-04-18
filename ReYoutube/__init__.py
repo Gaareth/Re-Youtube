@@ -4,7 +4,7 @@ from sqlalchemy import exc
 from datetime import datetime
 
 from .models import db, login_manager, Comment, User
-from .utils import youtube_date_format
+from .utils.time_utils import youtube_date_format
 
 import enum
 
@@ -38,13 +38,12 @@ from . import views
 @app.before_request
 def force_https():
     # enfore https by redirecting, except for localhost
-    if request.endpoint in app.view_functions and not request.is_secure and \
-            not request.url_root in ["http://localhost:5000/", "http://0.0.0.0:5000/"]:
+    if request.endpoint in app.view_functions and not request.is_secure and not app.config["DEBUG"]:
         return redirect(request.url.replace('http://', 'https://'))
 
 
 @app.context_processor
-def inject_stage_and_region():
+def inject_jinja_variables():
     return dict(current_year=datetime.now().year,
                 dark_theme=session.get("app_theme", default=AppTheme.WHITE.value) == AppTheme.DARK.value)
 

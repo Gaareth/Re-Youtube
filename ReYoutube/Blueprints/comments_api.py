@@ -49,7 +49,7 @@ def downvote_comment():
     comment = Comment.query.filter_by(id=comment_id).first()
     if comment is None:
         return jsonify({'isError': True, 'status': 400, 'statusText':
-        'Bad Request: The browser (or proxy) sent a request that this server could not understand.'}), 400
+            'Bad Request: The browser (or proxy) sent a request that this server could not understand.'}), 400
 
     current_user.downvote(comment)
     db.session.add_all([comment, current_user])

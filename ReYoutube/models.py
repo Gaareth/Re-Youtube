@@ -21,10 +21,16 @@ comments_downvoted_table = db.Table('comments_downvoted',
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     recipient_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.String)
+
+    link = db.Column(db.String)
+
+    def seen(self):
+        if self.timestamp <= self.recipient.notifications_last_checked:
+            return True
 
     def __repr__(self):
         return f"<Notification {self.sender_id} -> {self.recipient_id}>"
@@ -62,6 +68,12 @@ class User(UserMixin, db.Model):
         return Notification.query.filter_by(recipient=self).filter(
             Notification.timestamp > last_read_time).count()
 
+    def get_notifications(self):
+        self.notifications_last_checked = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
+        return Notification.query.order_by(Notification.timestamp.desc())
+
     def upvote(self, comment):
         if comment not in self.comments_upvoted:
 
@@ -98,7 +110,7 @@ class User(UserMixin, db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     comment = db.Column(db.String, nullable=False)
 
     is_edited = db.Column(db.Boolean, default=False)

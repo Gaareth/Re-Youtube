@@ -88,6 +88,15 @@
 
 </div>
 
+
+<!--The comment delete modal will show up in the comment card. Making it somehow impossible to click it. This fixes this-->
+<style>
+    .modal-backdrop{
+        width: 0;
+        height: 0;
+    }
+</style>
+
 <script type="text/javascript">
 
     function upvote_comment(c_id) {

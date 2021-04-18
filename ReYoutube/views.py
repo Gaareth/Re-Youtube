@@ -1,10 +1,12 @@
-from flask import redirect, url_for, flash, render_template, request, session
+from flask import redirect, url_for, flash, render_template, request, session, jsonify
 from flask_login import login_required, logout_user, current_user
 from is_safe_url import is_safe_url
 
 from ReYoutube import app, AppTheme
-from . import utils
+from .utils.comment_utils import add_comment, edit_comment, delete_comment, add_reply
 from .models import Comment
+
+import urllib
 
 
 @app.route("/logout")
@@ -61,7 +63,7 @@ def set_app_theme():
 @app.route("/watch/page/<int:page>", methods=["GET", "POST"])
 def watch(page=1):
     if request.method == "POST":
-        return utils.process_post_action(request, page)
+        return process_post_action(request, page)
 
     if video_id := request.args.get("v"):
         comment_query = Comment.query.filter_by(video_id=video_id)
@@ -86,3 +88,42 @@ def watch(page=1):
                                current_sorting=sort_by)
     else:
         return redirect(url_for("index"))
+
+
+def process_post_action(r, page):
+    action = r.form["action"]
+    video_id = r.form["video_id"]
+    print("Action", action)
+    if current_user.is_authenticated:
+        comment_message = r.form.get("message")
+        comment_id = r.form.get("comment_id")
+
+        url_arg_dict = {"v": video_id}
+
+        if comment_id is not None:
+            if comment := Comment.query.filter_by(id=comment_id).first():
+                if comment.parent is not None:
+                    url_arg_dict['auto_collapse'] = False
+
+        if action == "add":
+            add_comment(comment_message, video_id, current_user)
+        elif action == "edit":
+            edit_comment(comment_id, comment_message)
+        elif action == "delete":
+            delete_comment(comment_id)
+        elif action == "reply":
+            add_reply(comment_message, current_user, comment_id)
+        elif action == "sort":
+            sort_by = r.form.get("sort_by")
+            order = r.form.get("sort_order")
+
+            url_arg_dict["s"] = sort_by
+            url_arg_dict["o"] = order
+
+        url_params = urllib.parse.urlencode(url_arg_dict)
+
+        # Scroll to the interacted comment or redirect to the correct page
+        return redirect(f"{url_for('watch', page=page)}?{url_params}{f'#comment-{comment_id}' if comment_id else ''}")
+    else:
+        flash("Please login first", "danger")
+    return redirect(f"{url_for('watch', page=page)}?v={video_id}")

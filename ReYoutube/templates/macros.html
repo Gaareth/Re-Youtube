@@ -18,7 +18,7 @@
                                     onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
                             </div>
                             -->
-                            <div class="card-body pb-1">
+                            <div class="card-body pb-1" style="width: 100%;">
                             <div class="d-flex flex-row justify-content-between">
                                 <!-- Comment Username and Creation date-->
                                 <div class="btn-group dropup" href="">
@@ -76,30 +76,27 @@
                                             <input type="hidden" name="comment_id" value="{{comment.id}}">
                                             <input type="hidden" name="video_id" value="{{video_id}}">
 
-                                            <button class="btn p-0 fs-6 underline_animation"
+                                            <button type="button" class="btn p-0 fs-6 underline_animation"
                                                     data-bs-toggle="modal" data-bs-target="#delete-{{comment.id}}-confirm"
                                                     style="margin-bottom: .5rem; margin-top: -0.4rem; color: red;">
                                                 Delete
                                             </button>
                                             <!-- Comment deletion confirm modal -->
-                                            <div id="delete-{{comment.id}}-confirm" class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                              <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                  <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Delete comment</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            <div id="delete-{{comment.id}}-confirm" class="modal"  tabindex="-5000" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+                                                  <div class="modal-dialog modal-sm my-2 py-0">
+                                                    <div class="modal-content">
+
+                                                          <div class="modal-body py-1 my-0">
+                                                            Delete your comment permanently?
+                                                          </div>
+                                                          <div class="modal-footer py-1 my-0">
+                                                              <form action="{{ url_for('logout') }}" method="GET">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                                              </form>
+                                                          </div>
+                                                    </div>
                                                   </div>
-                                                  <div class="modal-body">
-                                                    Delete your comment permanently?
-                                                  </div>
-                                                  <div class="modal-footer">
-                                                      <form action="{{ url_for('logout') }}" method="GET">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                                      </form>
-                                                  </div>
-                                                </div>
-                                              </div>
                                             </div>
                                         </form>
                                     {% endif %}
@@ -110,9 +107,9 @@
                               <div class="row">
                                 <div class="col p-0">
                                   <div class="read_more">
-                                        <p class="collapse card-text my-0">
+                                        <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
                                             <a href="#comment-{{comment.parent.id}}">{% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}</a>
-                                            <span id="comment-content-{{comment.id}}" >{{comment.comment}}</span>
+                                            {{comment.comment}}
 
                                         </p>
                                       {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}

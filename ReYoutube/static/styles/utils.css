@@ -71,17 +71,23 @@ input[type="search"]:hover {
     box-shadow: 0 .175rem .75rem rgba(0,0,0,.1) !important;
 }
 
-.shake_on_hover:hover {
 
-    -webkit-animation-timing-function: ease-in-out;
-    animation-timing-function: ease-in-out;
-    -webkit-animation-name: tada;
-    animation-name: tada;
-
+.shake_animation {
+    -webkit-animation-name: headShake;
+    animation-name: headShake;
     -webkit-animation-duration: 1s;
     animation-duration: 1s;
     -webkit-animation-duration: var(--animate-duration);
     animation-duration: var(--animate-duration);
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
+}
+
+.scale_on_hover {
+   animation-timing-function: cubic-bezier(.215,.61,.355,1.000);
+   transition: transform .2s;
+}
+
+.scale_on_hover:hover {
+   transform: scale(1.12);
 }
