@@ -43,9 +43,15 @@ def add_reply(message: str, user: User, parent_comment_id: int):
             return
 
         reply = parent_comment.add_reply(message, user)
-        new_notification = Notification(sender=user,
-                                        recipient=parent_comment.user,
-                                        link=f"/watch?v={reply.video_id}&auto_collapse#comment-{parent_comment.id}",
-                                        content=message)
-        db.session.add_all([reply, new_notification])
+
+        # Only add a notification if the reply is not a self-reply
+        # (I don't need a notification for a comment I wrote myself)
+        if parent_comment.user != user:
+            new_notification = Notification(sender=user,
+                                            recipient=parent_comment.user,
+                                            link=f"/watch?v={reply.video_id}&auto_collapse#comment-{parent_comment.id}",
+                                            content=message)
+            db.session.add(new_notification)
+
+        db.session.add(reply)
         db.session.commit()

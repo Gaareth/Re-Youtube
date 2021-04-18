@@ -1,7 +1,9 @@
 import os
+
+
 class Config(object):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
 
@@ -13,6 +15,7 @@ class Config(object):
     COMMENT_MAX_SHOW = 240  # max characters showed in a comment before hidden by collapsable
     NOTIFICATION_MAX_SHOW = 10  # max characters shown in the notification dropdown
     ALLOWED_HOSTS = ["127.0.0.1:5000", "reyoutube.herokuapp.com"]
+
 
 class ProductionConfig(Config):
     pass
