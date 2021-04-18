@@ -15,7 +15,7 @@ class AppTheme(enum.Enum):
 
 
 app = Flask(__name__)
-app.config.from_object("config.TestingConfig")
+app.config.from_object("config.ProductionConfig")
 
 app.register_blueprint(google_auth.blueprint, url_prefix="/login")
 app.register_blueprint(comments_api.blueprint)
@@ -37,7 +37,7 @@ from . import views
 
 @app.before_request
 def force_https():
-    # enfore https by redirecting, except for localhost
+    # enfore https by redirecting, except for debugging
     if request.endpoint in app.view_functions and not request.is_secure and not app.config["DEBUG"]:
         return redirect(request.url.replace('http://', 'https://'))
 
