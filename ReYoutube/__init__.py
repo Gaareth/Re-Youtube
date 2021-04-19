@@ -15,10 +15,11 @@ class AppTheme(enum.Enum):
 
 
 app = Flask(__name__)
-app.config.from_object("config.ProductionConfig")
+app.config.from_object("config.TestingConfig")
 
 app.register_blueprint(google_auth.blueprint, url_prefix="/login")
 app.register_blueprint(comments_api.blueprint)
+
 
 # Initialize Database
 db.init_app(app)
@@ -28,6 +29,9 @@ with app.app_context():
         db.create_all()
     except (exc.OperationalError, exc.ProgrammingError):
         print("Table already exists!")
+
+    from .Blueprints import database_cli
+    app.register_blueprint(database_cli.blueprint)
 
 login_manager.init_app(app)
 
