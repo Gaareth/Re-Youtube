@@ -121,9 +121,11 @@
                                                   Show the author of the parent comment if there is no visual indention
                                                   to better illustrate which comment is the parent one
                                                  -->
-                                            <a href="#comment-{{comment.parent.id}}">
-                                                {% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}
-                                             </a>
+                                            {% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%}
+                                                <a href="#comment-{{comment.parent.id}}">
+                                                    @{{comment.parent.user.username}}
+                                                </a>
+                                            {% endif %}
 
                                             <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
                                                 {{comment.comment}}
