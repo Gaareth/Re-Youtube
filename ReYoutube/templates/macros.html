@@ -116,14 +116,14 @@
                                 <div class="col p-0">
                                   <div class="read_more">
 
-                                      <!--
-                                      Show the author of the parent comment if there is no visual indention
-                                      to better illustrate which comment is the parent one
-                                      -->
                                         <div class="d-flex flex-row" style="gap: 10px;">
-                                             <a href="#comment-{{comment.parent.id}}">
+                                                <!--
+                                                  Show the author of the parent comment if there is no visual indention
+                                                  to better illustrate which comment is the parent one
+                                                 -->
+                                            <a href="#comment-{{comment.parent.id}}">
                                                 {% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}
-                                            </a>
+                                             </a>
 
                                             <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
                                                 {{comment.comment}}
