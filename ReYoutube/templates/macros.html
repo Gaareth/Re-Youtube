@@ -63,7 +63,7 @@
                                         </form>
 
                                         <div class="pe-1" style="display: block;">
-                                            <button class="btn p-0 underline_animation" type="button"
+                                            <button class="btn btn-link p-0 underline_animation" type="button"
                                                     id="comment-{{comment.id}}-edit-option"
                                                     onclick="edit_comment({{comment.id}})"
                                                     style="margin-bottom: .5rem; margin-top: -0.4rem; color: var(--bs-primary)">
@@ -72,9 +72,9 @@
                                         </div>
 
                                         <div class="pe-1" style="display: none;" id="comment-{{comment.id}}-abort-option">
-                                            <button class="btn p-0 underline_animation text-muted" type="button"
+                                            <button class="btn btn-link p-0 underline_animation text-muted" type="button"
                                                     onclick="edit_comment({{comment.id}})"
-                                                    style="margin-bottom: .5rem; margin-top: -0.4rem;">
+                                                    style="margin-bottom: .5rem; margin-top: -0.4rem; font-weight:600;">
                                                 Abort
                                             </button>
                                         </div>
@@ -115,11 +115,20 @@
                               <div class="row">
                                 <div class="col p-0">
                                   <div class="read_more">
-                                        <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
-                                            <a href="#comment-{{comment.parent.id}}">{% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}</a>
-                                            {{comment.comment}}
 
-                                        </p>
+                                      <!--
+                                      Show the author of the parent comment if there is no visual indention
+                                      to better illustrate which comment is the parent one
+                                      -->
+                                        <div class="d-flex flex-row" style="gap: 10px;">
+                                             <a href="#comment-{{comment.parent.id}}">
+                                                {% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%} @{{comment.parent.user.username}}{% endif %}
+                                            </a>
+
+                                            <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
+                                                {{comment.comment}}
+                                            </p>
+                                        </div>
                                       {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
                                         <a class="collapsed btn btn-link p-0 mt-1 mb-2 read_more_link" data-bs-toggle="collapse"
                                               data-bs-target="#comment-content-{{comment.id}}"
