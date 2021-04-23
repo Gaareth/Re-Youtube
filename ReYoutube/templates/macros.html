@@ -8,7 +8,7 @@
                     class="py-1"
             >
 
-                <div class="card animate__animated animate__zoomIn animate__faster background-color4">
+                <div class="card card__outline__animated animate__animated animate__zoomIn animate__faster background-color4">
 
 
                         <div class="card-img-top d-flex">
@@ -55,7 +55,7 @@
                                             <input type="hidden" name="video_id" value="{{video_id}}">
 
                                             <button id="comment-{{comment.id}}-save-submit" style="display: none;" type="submit"></button>
-                                            <button class="btn p-0 underline_animation" type="button"
+                                            <button class="btn btn-link p-0 underline_animation" type="button"
                                                     onclick="save_comment({{comment.id}})"
                                                     style="margin-bottom: .5rem; margin-top: -0.4rem;">
                                                 Save
@@ -66,8 +66,16 @@
                                             <button class="btn p-0 underline_animation" type="button"
                                                     id="comment-{{comment.id}}-edit-option"
                                                     onclick="edit_comment({{comment.id}})"
-                                                    style="margin-bottom: .5rem; margin-top: -0.4rem;">
+                                                    style="margin-bottom: .5rem; margin-top: -0.4rem; color: var(--bs-primary)">
                                                 Edit
+                                            </button>
+                                        </div>
+
+                                        <div class="pe-1" style="display: none;" id="comment-{{comment.id}}-abort-option">
+                                            <button class="btn p-0 underline_animation text-muted" type="button"
+                                                    onclick="edit_comment({{comment.id}})"
+                                                    style="margin-bottom: .5rem; margin-top: -0.4rem;">
+                                                Abort
                                             </button>
                                         </div>
 

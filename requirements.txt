@@ -9,3 +9,4 @@ SQLAlchemy-Utils
 blinker
 is_safe_url
 psycopg2
+python-dotenv

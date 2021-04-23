@@ -9,3 +9,7 @@
 .theme-switcher:hover {
      color: #fcce16;
 }
+
+.foreground-color {
+    color: black !important;
+}

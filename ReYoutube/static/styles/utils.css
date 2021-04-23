@@ -18,6 +18,8 @@
   width: 100%;
 }
 
+
+
 custom_tooltip {
   position: relative;
   display: inline-block;
@@ -45,17 +47,48 @@ custom_tooltip {
   visibility: visible;
 }
 
+
+
 footer {
     width: 100%
 }
 
 .card:hover {
-    box-shadow: 0 .175rem .75rem rgba(0,0,0,.1) !important;
+    box-shadow: 0 .19rem .9rem rgba(0,0,0,.125) !important;
 }
 
 .card {
    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
 }
+
+.card__outline__animated::before, .card__outline__animated::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transition: opacity 0.38s ease-in-out, transform 0.35s ease-in-out;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+.card__outline__animated::before {
+  transform: scale3d(0, 1, 1);
+  transform-origin: left top;
+  border-top: 1px solid #acacac;
+  border-bottom: 1px solid #acacac;
+}
+.card__outline__animated::after {
+  transform: scale3d(1, 0, 1);
+  transform-origin: right top;
+  border-right: 1px solid #acacac;
+  border-left: 1px solid #acacac;
+}
+.card__outline__animated:hover::before, .card__outline__animated:hover::after, .card__outline__animated:focus::before, .card__outline__animated:focus::after {
+  transform: scale3d(1,1,1);
+  opacity: 1;
+}
+
 
 .btn-noborder {
         padding: 0;
@@ -70,6 +103,8 @@ input[type="search"] {
 input[type="search"]:hover {
     box-shadow: 0 .175rem .75rem rgba(0,0,0,.1) !important;
 }
+
+
 
 
 .shake_animation {
@@ -91,3 +126,6 @@ input[type="search"]:hover {
 .scale_on_hover:hover {
    transform: scale(1.12);
 }
+
+
+

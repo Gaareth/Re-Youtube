@@ -23,6 +23,7 @@ def delete_comment(comment_id):
 
 def add_comment(message: str, video_id: str, user: User):
     """ Function to add a new comment to the database """
+    message = message.strip()
     if len(message) > 0:
         comment = Comment(comment=message, video_id=video_id, user=user)
         db.session.add(comment)
@@ -37,6 +38,7 @@ def add_reply(message: str, user: User, parent_comment_id: int):
             user: current User object
             parent_comment_id: ID of the comment that should be replied to
     """
+    message = message.strip()
     if len(message) > 0:
         parent_comment = Comment.query.filter_by(id=parent_comment_id).first()
         if parent_comment is None:

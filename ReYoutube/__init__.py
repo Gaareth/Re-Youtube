@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, session, request, redirect
 from .Blueprints import google_auth, comments_api
 from sqlalchemy import exc
@@ -15,11 +17,10 @@ class AppTheme(enum.Enum):
 
 
 app = Flask(__name__)
-app.config.from_object("config.TestingConfig")
+app.config.from_object("config.Config")
 
 app.register_blueprint(google_auth.blueprint, url_prefix="/login")
 app.register_blueprint(comments_api.blueprint)
-
 
 # Initialize Database
 db.init_app(app)

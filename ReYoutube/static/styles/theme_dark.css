@@ -87,3 +87,11 @@ html, body {
 .modal-content {
      background-color: var(--background-color5) !important;
 }
+
+.foreground-color {
+    color: white !important;
+}
+
+.foreground-color2 {
+    color: #6c757d !important;
+}

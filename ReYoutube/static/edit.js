@@ -13,14 +13,16 @@ function edit_comment(comment_id) {
     var comment_edit_textarea_actual = document.getElementById("comment-"+comment_id+"-input-textarea");
 
     var edit_option = document.getElementById("comment-"+comment_id+"-edit-option");
+    var abort_option = document.getElementById("comment-"+comment_id+"-abort-option");
+
     var save_option = document.getElementById("comment-"+comment_id+"-save-option");
     var comment_content = document.getElementById("comment-content-"+comment_id);
 
     if (comment_edit_textarea.style.display == "block") {
     //Pressed Abort
         comment_edit_textarea.style.display = "none";
-        edit_option.innerHTML = "Edit";
-        edit_option.style = "margin-bottom: .5rem; margin-top: -0.4rem;";
+        edit_option.style.display = "block";
+        abort_option.style.display = "none";
 
         comment_content.style.display = "block";
 
@@ -28,12 +30,13 @@ function edit_comment(comment_id) {
     }else {
     // Pressed Edit
         comment_edit_textarea.style.display = "block";
-        edit_option.innerHTML = "Abort";
-        edit_option.style = "margin-bottom: .5rem; margin-top: -0.4rem; color: black;";
+        edit_option.style.display = "none";
+        abort_option.style.display = "block";
 
         comment_content.style.display = "none";
 
         save_option.style.display = "block";
-        comment_edit_textarea_actual.value = comment_content.innerHTML.trim();
+        comment_edit_textarea_actual.value = (comment_content.innerText || comment_content.textContent).trim();
     }
+
 }
