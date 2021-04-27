@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, session, request, redirect
-from .Blueprints import google_auth, comments_api
+from .Blueprints import google_auth, api
 from sqlalchemy import exc
 from datetime import datetime
 
@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config.from_object("config.Config")
 
 app.register_blueprint(google_auth.blueprint, url_prefix="/login")
-app.register_blueprint(comments_api.blueprint)
+app.register_blueprint(api.blueprint)
 
 # Initialize Database
 db.init_app(app)
@@ -33,6 +33,7 @@ with app.app_context():
 
     from .Blueprints import database_cli
     app.register_blueprint(database_cli.blueprint)
+
 
 login_manager.init_app(app)
 
