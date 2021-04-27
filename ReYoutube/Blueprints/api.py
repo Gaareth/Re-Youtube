@@ -21,6 +21,11 @@ def handle_bad_request(e):
                                   'The browser (or proxy) sent a request that this server could not understand.'}), 400
 
 
+
+@app.route("/is_authenticated")
+def is_authenticated():
+    return jsonify(is_authenticated=current_user.is_authenticated)
+
 @blueprint.route("/upvote_comment", methods=["POST"])
 @login_required
 def upvote_comment():
