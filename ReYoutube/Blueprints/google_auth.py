@@ -14,7 +14,6 @@ blueprint = make_google_blueprint(
 )
 
 
-
 # create/login local user on successful OAuth login
 @oauth_authorized.connect_via(blueprint)
 def google_logged_in(blueprint, token):
@@ -35,7 +34,7 @@ def google_logged_in(blueprint, token):
 
     info_yt = resp_yt.json()
     if "items" not in info_yt:
-        #TODO: implement google account usage
+        # TODO: implement google account usage
         flash("Please choose an actual Youtube Account!", "danger")
         return redirect_next()
 
@@ -67,16 +66,22 @@ def google_logged_in(blueprint, token):
 
         return redirect_next()
 
+
 def redirect_next():
     from .. import app
 
     # get next_url , default is index
     next_url = session.get("next_url", "/")
-    print(next_url)
-    if not is_safe_url(next_url, allowed_hosts=app.config["ALLOWED_HOSTS"]):
+    next_action = session.get("next_action")  # the default is 'redirect'
+
+    if next_action == "redirect" and not is_safe_url(next_url, allowed_hosts=app.config["ALLOWED_HOSTS"]):
         return redirect("/")
+    elif next_action == "extension":
+        # redirect to endpoint where extension-authentication action is handled
+        return redirect("/extension-authentication")
     # redirect the user to `next_url`
     return redirect(next_url)
+
 
 # notify on OAuth provider error
 @oauth_error.connect_via(blueprint)

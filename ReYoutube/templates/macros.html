@@ -127,14 +127,18 @@
                                                 </a>
                                             {% endif %}
 
-                                            <p class="collapse card-text my-0" id="comment-content-{{comment.id}}">
-                                                {{comment.comment}}
-                                            </p>
+                                            <div class="collapse" id="comment-content-wrapper-{{comment.id}}"
+                                                 style="width: 100%; max-height: {{config['COMMENT_MAX_SHOW_HEIGHT']}}px">
+                                                <p class="card-text my-0" id="comment-content-{{comment.id}}"
+                                                   style="width: 100%;">
+                                                    {{comment.comment}}
+                                                </p>
+                                            </div>
                                         </div>
                                       {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
                                         <a class="collapsed btn btn-link p-0 mt-1 mb-2 read_more_link" data-bs-toggle="collapse"
-                                              data-bs-target="#comment-content-{{comment.id}}"
-                                           href="#comment-content-{{comment.id}}"
+                                              data-bs-target="#comment-content-wrapper-{{comment.id}}"
+                                           href="#comment-content-wrapper-{{comment.id}}"
                                               aria-expanded="false" aria-controls=".reply-input">
                                         </a>
                                       {% endif %}

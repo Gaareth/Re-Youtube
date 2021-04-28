@@ -4,6 +4,7 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime
+from .utils.time_utils import youtube_date_format
 
 db = SQLAlchemy()
 
@@ -34,6 +35,10 @@ class Notification(db.Model):
 
     def __repr__(self):
         return f"<Notification {self.sender_id} -> {self.recipient_id}>"
+
+    def serialize(self):
+        return {"id": self.id, "timestamp": self.timestamp, "sender_id": self.sender_id, "recipient_id": self.recipient_id,
+                "content": self.content, "link": self.link}
 
 
 class User(UserMixin, db.Model):
@@ -106,6 +111,14 @@ class User(UserMixin, db.Model):
     def has_downvoted_comment(self, comment):
         return comment in self.comments_downvoted
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "profile_picture": self.profile_picture,
+            "notifications_last_checked": self.notifications_last_checked
+        }
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -134,6 +147,23 @@ class Comment(db.Model):
 
     def __repr__(self):
         return f"Comment [{self.video_id}] ({self.user}) [Up: {self.upvotes}, Down: {self.downvotes}]"
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "video_id": self.video_id,
+            "created_at": [self.created_at, youtube_date_format(self.created_at)],
+            "comment": self.comment,
+            "user_id": self.user_id,
+            "user": self.user.serialize(),
+            "upvotes": self.upvotes,
+            "downvotes": self.downvotes,
+            "rating": self.rating,
+            "is_edited": self.is_edited,
+
+            "parent_id": self.parent_id,
+            "replies": [reply.serialize() for reply in self.replies]
+        }
 
 
 class OAuth(OAuthConsumerMixin, db.Model):

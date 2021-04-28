@@ -20,12 +20,20 @@ def logout():
     return redirect(next_url)
 
 
+# close tab in case of browser extension authentication
+@app.route("/extension-authentication")
+@login_required
+def extension_auth():
+    return render_template("extension_auth.html")
+
+
 @app.route("/login")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     # Redirect to referrer url after login
     session['next_url'] = request.referrer
+    session['next_action'] = request.args.get("next_action", "redirect")
     return redirect(url_for("google.login"))
 
 

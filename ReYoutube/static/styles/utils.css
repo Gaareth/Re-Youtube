@@ -105,7 +105,9 @@ input[type="search"]:hover {
 }
 
 
-
+.shadow_on_hover:hover {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}
 
 .shake_animation {
     -webkit-animation-name: headShake;
@@ -123,8 +125,16 @@ input[type="search"]:hover {
    transition: transform .2s;
 }
 
-.scale_on_hover:hover {
-   transform: scale(1.12);
+.scale_on_hover_sm:hover {
+   transform: scale(1.001);
+}
+
+.scale_on_hover_md:hover {
+   transform: scale(1.1);
+}
+
+.scale_on_hover_lg:hover {
+   transform: scale(1.2);
 }
 
 

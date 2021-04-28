@@ -31,7 +31,7 @@
                                                         {% if notification.sender.username|length <= config['NOTIFICATION_MAX_SHOW'] %}
                                                             {{notification.sender.username}} replied:
                                                         {% else %}
-                                                            {{notification.sender.username|str_slice(0, config['NOTIFICATION_MAX_SHOW'])}} replied:
+                                                            {{notification.sender.username|str_slice(0, config['NOTIFICATION_MAX_SHOW'])}}.. replied:
                                                         {% endif %}
 
                                                         {% if notification.content|length <= config['NOTIFICATION_MAX_SHOW'] %}

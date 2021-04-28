@@ -12,7 +12,7 @@ def edit_comment(comment_id: int, new_message: str):
     old_comment = Comment.query.filter_by(id=comment_id).first()
 
     # Bad request
-    if len(new_message) > 0 or old_comment is None:
+    if len(new_message) <= 0 or old_comment is None:
         return 400
     if old_comment.user != current_user:
         return 401  # Unauthorized

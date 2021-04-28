@@ -23,7 +23,7 @@
 }
 
 
-.read_more p.collapse:not(.show) {
+.read_more div.collapse:not(.show) {
     overflow: hidden;
 
     display: -webkit-box;
@@ -31,9 +31,6 @@
     -webkit-box-orient: vertical;
 }
 
-.read_more p.collapsing {
-    min-height: 90px !important;
-}
 
 .read_more_link {
     text-decoration: none !important;
