@@ -111,7 +111,7 @@
                                 </div>
                             </div>
 
-                            <div class="container m-0">
+                            <div class="container m-0" id="comment-content-wrapper-{{comment.id}}" >
                               <div class="row">
                                 <div class="col p-0">
                                   <div class="read_more">
@@ -126,7 +126,9 @@
                                                     @{{comment.parent.user.username}}
                                                 </a>
                                             {% endif %}
-                                            <div id="comment-content-wrapper-{{comment.id}}" style="width: 100%;">
+
+                                            <div style="width: 100%;">
+
                                                 <div class="collapse show collapse-read_more-{{comment.id}}" style="width: 100%;">
                                                     <p class="card-text my-0">
                                                         {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
@@ -135,7 +137,7 @@
                                                             {{comment.comment}}
                                                         {% endif %}
                                                     </p>
-                                            </div>
+                                                </div>
                                                 <div class="collapse collapse-read_more-{{comment.id}}">
                                                     <p class="mb-0" id="comment-content-{{comment.id}}">
                                                         {{comment.comment}}

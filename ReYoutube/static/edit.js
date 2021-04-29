@@ -17,6 +17,7 @@ function edit_comment(comment_id) {
 
     var save_option = document.getElementById("comment-"+comment_id+"-save-option");
     var comment_content = document.getElementById("comment-content-"+comment_id);
+    var comment_content_wrapper = document.getElementById("comment-content-wrapper-"+comment_id);
 
     if (comment_edit_textarea.style.display == "block") {
     //Pressed Abort
@@ -24,7 +25,7 @@ function edit_comment(comment_id) {
         edit_option.style.display = "block";
         abort_option.style.display = "none";
 
-        comment_content.style.display = "block";
+        comment_content_wrapper.style.display = "block";
 
         save_option.style.display = "none";
     }else {
@@ -33,7 +34,7 @@ function edit_comment(comment_id) {
         edit_option.style.display = "none";
         abort_option.style.display = "block";
 
-        comment_content.style.display = "none";
+        comment_content_wrapper.style.display = "none";
 
         save_option.style.display = "block";
         comment_edit_textarea_actual.value = (comment_content.innerText || comment_content.textContent).trim();
