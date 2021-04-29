@@ -126,19 +126,28 @@
                                                     @{{comment.parent.user.username}}
                                                 </a>
                                             {% endif %}
-
-                                            <div class="collapse" id="comment-content-wrapper-{{comment.id}}"
-                                                 style="width: 100%; max-height: {{config['COMMENT_MAX_SHOW_HEIGHT']}}px">
-                                                <p class="card-text my-0" id="comment-content-{{comment.id}}"
-                                                   style="width: 100%;">
-                                                    {{comment.comment}}
-                                                </p>
+                                            <div id="comment-content-wrapper-{{comment.id}}" style="width: 100%;">
+                                                <div class="collapse show collapse-read_more-{{comment.id}}" style="width: 100%;">
+                                                    <p class="card-text my-0">
+                                                        {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
+                                                            {{comment.comment|str_slice(0, config["COMMENT_MAX_SHOW"])}}..
+                                                        {% else %}
+                                                            {{comment.comment}}
+                                                        {% endif %}
+                                                    </p>
                                             </div>
+                                                <div class="collapse collapse-read_more-{{comment.id}}">
+                                                    <p class="mb-0" id="comment-content-{{comment.id}}">
+                                                        {{comment.comment}}
+                                                    </p>
+                                                </div>
+                                            </div>
+
                                         </div>
                                       {% if comment.comment|length > config["COMMENT_MAX_SHOW"] %}
-                                        <a class="collapsed btn btn-link p-0 mt-1 mb-2 read_more_link" data-bs-toggle="collapse"
-                                              data-bs-target="#comment-content-wrapper-{{comment.id}}"
-                                           href="#comment-content-wrapper-{{comment.id}}"
+                                        <a class="collapsed btn btn-link p-0 mt-1 mb-0 read_more_link" data-bs-toggle="collapse"
+                                              data-bs-target=".collapse-read_more-{{comment.id}}"
+                                           href="#comment-content-more-{{comment.id}}"
                                               aria-expanded="false" aria-controls=".reply-input">
                                         </a>
                                       {% endif %}

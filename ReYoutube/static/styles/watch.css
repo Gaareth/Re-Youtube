@@ -23,14 +23,6 @@
 }
 
 
-.read_more div.collapse:not(.show) {
-    overflow: hidden;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
 
 .read_more_link {
     text-decoration: none !important;
