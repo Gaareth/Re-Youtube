@@ -1,10 +1,13 @@
-from flask import Blueprint, request, render_template, jsonify
+from flask import Blueprint, request, render_template, jsonify, make_response
 import werkzeug.exceptions
 from functools import wraps
 from flask_login import current_user, login_required
 from ..models import User, Comment, db
 
 from ..utils import comment_utils
+from flask import current_app
+
+import math
 
 blueprint = Blueprint('comments_api', __name__, url_prefix="/api")
 
@@ -52,7 +55,7 @@ def get_notifications():
 @blueprint.route("/comments/self/get_comment_vote_status/<int:comment_id>")
 @is_authenticated_api
 def get_comment_vote_status(comment_id):
-    comment = Comment.query.get_or_404(comment_id)
+    comment = Comment.query.get(comment_id)
     if comment is not None:
         return jsonify(
             upvoted=current_user.has_upvoted_comment(comment),
@@ -63,12 +66,48 @@ def get_comment_vote_status(comment_id):
 
 
 @blueprint.route("/comments/get_comments/<video_id>")
-def get_comments_by_video_id(video_id):
-    comments = Comment.query.filter_by(video_id=video_id)
+@blueprint.route("/comments/get_comments/<video_id>/<sort_by>/<sort_direction>")
+def get_comments_by_video_id(video_id, sort_by=None, sort_direction=None):
+    sort_options = {
+        "upload_date": Comment.created_at.desc() if sort_direction == "desc" else Comment.created_at.asc(),
+        "rating": Comment.rating.desc() if sort_direction == "desc" else Comment.rating.asc()
+    }
+
+    comments = Comment.query.filter_by(video_id=video_id).order_by(sort_options.get(sort_by))
     if comments is not None:
         return jsonify([comment.serialize() for comment in comments])
     else:
         return jsonify(isError=True, status=404, statusText="Video not found"), 404
+
+
+@blueprint.route("/comments/get_comments/paginated/", methods=["POST"])
+def load_comments():
+    """ Route to return the comments paginated """
+    quantity = current_app.config['PAGE_MAX_COMMENTS']
+    video_id = request.json["video_id"]
+    counter = request.json["counter"]
+    sort_by = request.json["sort_by"]
+    sort_direction = request.json["sort_direction"]
+    print(request.json)
+    num_comments = Comment.query.filter_by(video_id=video_id).count()
+    page = math.ceil((counter + 1) / quantity)
+
+    sort_options = {
+        "upload_date": Comment.created_at.desc() if sort_direction == "desc" else Comment.created_at.asc(),
+        "rating": Comment.rating.desc() if sort_direction == "desc" else Comment.rating.asc()
+    }
+
+    if counter < num_comments:
+        comments = Comment.query.filter_by(video_id=video_id).order_by(sort_options[sort_by]). \
+            paginate(page=page, per_page=quantity, error_out=False)
+
+        res = comments.items
+        print(res[0])
+        res = (jsonify(list(map(lambda c: c.serialize(), res))))
+    else:
+        res = make_response(jsonify({}), 200)
+
+    return res
 
 
 # POSTS
@@ -120,13 +159,18 @@ def add_comment():
             video_id= The Youtube video id\n
             comment_content= Content/Message of the comment
 
+        Returns:
+            dict(
+            statusCode= http status code response of the action (200/400)
+            comment= Comment Object of the reply
+            )
     """
     try:
         video_id = request.json["video_id"]
         comment_content = request.json["comment_content"]
 
-        response_code = comment_utils.add_comment(message=comment_content, video_id=video_id, user=current_user)
-        return jsonify(statusCode=response_code), response_code
+        comment, response_code = comment_utils.add_comment(message=comment_content, video_id=video_id, user=current_user)
+        return jsonify(statusCode=response_code, comment=comment.serialize()), response_code
     except (KeyError, TypeError) as e:
         return handle_bad_request(e)
 
@@ -140,13 +184,19 @@ def add_reply():
             parent_id= ID of the parent comment
             comment_content= Content/Message of the reply
 
+        Returns:
+            dict(
+            statusCode= http status code response of the action (200/400)
+            comment= Comment Object of the reply
+            )
     """
+    #${comment.parent_id != null ? '@'+get_comment_by_id(all_comments, comment.parent_id).user.username : ''}
     try:
         parent_id = request.json["parent_id"]
         comment_content = request.json["comment_content"]
 
-        response_code = comment_utils.add_reply(message=comment_content, parent_comment_id=parent_id, user=current_user)
-        return jsonify(statusCode=response_code), response_code
+        reply, response_code = comment_utils.add_reply(message=comment_content, parent_comment_id=parent_id, user=current_user)
+        return jsonify(statusCode=response_code, comment=reply.serialize()), response_code
     except (KeyError, TypeError) as e:
         return handle_bad_request(e)
 
@@ -198,4 +248,4 @@ def handle_internal_error(e):
 def handle_bad_request(e):
     return jsonify({'isError': True, 'status': 400,
                     'statusText': 'Bad Request: '
-                                  'The browser (or proxy) sent a request that this server could not understand.'}), 400
+                                  'The request cannot be fulfilled due to bad syntax.'}), 400

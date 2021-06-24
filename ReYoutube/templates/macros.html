@@ -12,18 +12,19 @@
 
 
                         <div class="card-img-top d-flex">
-                            <!-- TODO: implement profile picture which does not look retarded
-                            <div class="profile-picture ps-1 pt-2">
-                                <img src={{comment.user.profile_picture}} alt="profile picture" width="26" height="26" class="rounded-circle img-fluid"
+                            <div class="profile-picture ps-2 pt-3" style="margin-right: 16px;">
+                                <img src={{comment.user.profile_picture}} alt="profile picture" width="40" height="40" class="rounded-circle img-fluid"
                                     onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
                             </div>
-                            -->
-                            <div class="card-body pb-1" style="width: 100%;">
+
+                            <div class="card-body pb-1 ps-0 pe-2" style="width: 100%; word-break: break-all;">
                             <div class="d-flex flex-row justify-content-between">
                                 <!-- Comment Username and Creation date-->
                                 <div class="btn-group dropup" href="">
                                     <h6 class="card-subtitle mb-2 text-muted" id="comment-title" data-bs-toggle="dropdown">
-                                        {{comment.user.username}} - {{comment.created_at|yt_strftime}} {{"(Edited)" if comment.is_edited else ""}}
+                                        <span><strong>{{comment.user.username}}</strong></span>
+                                        <span>- {{comment.created_at|yt_strftime}}</span>
+                                        <span>{{"(Edited)" if comment.is_edited else ""}}</span>
                                     </h6>
 
 
@@ -31,9 +32,9 @@
                                        <li>
                                            <div class="d-flex">
                                                <div class="profile-picture ps-1 pe-2" style="padding: .25rem 1rem;">
-                                                <img src={{comment.user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle img-fluid"
+                                                    <img src={{comment.user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle img-fluid"
                                                     onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
-                                            </div>
+                                                </div>
                                                 <a class="dropdown-item ps-0">Userid: {{comment.user.id}}</a>
                                            </div>
                                        </li>
@@ -122,9 +123,30 @@
                                                   to better illustrate which comment is the parent one
                                                  -->
                                             {% if indent >= config.MAX_COMMENT_INDENTATION_LEVEL%}
-                                                <a href="#comment-{{comment.parent.id}}">
-                                                    @{{comment.parent.user.username}}
-                                                </a>
+                                                <div class="btn-group dropup">
+                                                    <a href="#comment-{{comment.parent.id}}" style="word-break: normal;" data-bs-toggle="dropdown">
+                                                        @{{comment.parent.user.username}}
+                                                    </a>
+
+                                                    <ul class="dropdown-menu">
+                                                       <li>
+                                                           <div class="d-flex">
+                                                               <div class="profile-picture ps-1 pe-2" style="padding: .25rem 1rem;">
+                                                                    <img src={{comment.user.profile_picture}} alt="profile picture" width="32" height="32" class="rounded-circle img-fluid"
+                                                                    onerror="if (this.src != '/static/images/profile_picture_fallback.jpg') this.src = '/static/images/profile_picture_fallback.jpg';">
+                                                                </div>
+                                                               <div class="">
+                                                                <!--     TODO: perhaps check if commenbt to long and then truncate                                                              -->
+                                                                   <a class="dropdown-item ps-0 fw-bold text-muted">{{comment.parent.user.username}}</a>
+                                                                   <p>{{comment.parent.comment}}</p>
+                                                               </div>
+                                                           </div>
+                                                       </li>
+                                                    </ul>
+
+                                                </div>
+
+
                                             {% endif %}
 
                                             <div style="width: 100%;">
@@ -165,7 +187,7 @@
                           </div>
 
                           <div class="comment-interactions d-flex pt-2">
-                              <!--TODO: implement comment like and dislike options-->
+
                               <div class="comments-upvote pe-3">
                                     <button class="btn btn-link p-0  comments-upvote-button" type="button" data-bs-toggle="collapse"
                                         aria-expanded="false" aria-controls=".reply-input" onclick="upvote_comment({{comment.id}})">

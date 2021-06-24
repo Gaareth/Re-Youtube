@@ -146,7 +146,7 @@ class Comment(db.Model):
         return Comment(comment=text, parent=self, video_id=self.video_id, user=user)
 
     def __repr__(self):
-        return f"Comment [{self.video_id}] ({self.user}) [Up: {self.upvotes}, Down: {self.downvotes}]"
+        return f"Comment [{self.video_id}] ({self.user}) [Up: {self.upvotes}, Down: {self.downvotes}]: {self.comment}"
 
     def serialize(self):
         return {

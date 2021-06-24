@@ -43,6 +43,7 @@ def delete_comment(comment_id):
 def add_comment(message: str, video_id: str, user: User):
     """ Function to add a new comment to the database
         Returns:
+            the comment
             http status code of the result (int)
     """
     message = message.strip()
@@ -50,7 +51,7 @@ def add_comment(message: str, video_id: str, user: User):
         comment = Comment(comment=message, video_id=video_id, user=user)
         db.session.add(comment)
         db.session.commit()
-        return 200
+        return comment, 200
     return 400  # Bad Request
 
 
@@ -63,13 +64,14 @@ def add_reply(message: str, user: User, parent_comment_id: int):
             parent_comment_id: ID of the comment that should be replied to
 
         Returns:
+            the reply
             http status code of the result (int)
     """
     message = message.strip()
     if len(message) > 0:
         parent_comment = Comment.query.filter_by(id=parent_comment_id).first()
         if parent_comment is None:
-            return 400  # Bad Request
+            return None, 400  # Bad Request
 
         reply = parent_comment.add_reply(message, user)
 
@@ -84,5 +86,5 @@ def add_reply(message: str, user: User, parent_comment_id: int):
 
         db.session.add(reply)
         db.session.commit()
-        return 200
-    return 400  # Bad Request
+        return reply, 200
+    return None, 400  # Bad Request

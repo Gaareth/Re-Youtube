@@ -17,7 +17,7 @@ class AppTheme(enum.Enum):
 
 
 app = Flask(__name__)
-app.config.from_object("config.Config")
+app.config.from_object("config.TestingConfig")
 
 app.register_blueprint(google_auth.blueprint, url_prefix="/login")
 app.register_blueprint(api.blueprint)

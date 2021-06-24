@@ -16,7 +16,7 @@ class Config(object):
     GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
     GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 
-    PAGE_MAX_COMMENTS = 50  # max comments per page
+    PAGE_MAX_COMMENTS = 20  # max comments per page
     MAX_COMMENT_INDENTATION_LEVEL = 3  # how many replies to a comment with a visual indent are allowed
 
     COMMENT_MAX_SHOW = 100  # max characters showed in a comment before hidden by collapsable
